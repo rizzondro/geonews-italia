@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rassegna Stampa Messina - Canale Sicuro</title>
+    <title>Rassegna Stampa Messina - Pannello PC Blindato</title>
     <style>
         :root {
             --primary: #0f172a;
             --gds-color: #1d4ed8;
-            --cronaca-color: #0284c7;
+            --ts-color: #0284c7;
             --bg: #f1f5f9;
-            --text: #334155;
         }
         
         body {
@@ -18,201 +17,110 @@
             margin: 0;
             padding: 0;
             background-color: var(--bg);
-            color: var(--text);
+            overflow: hidden; /* Evita la doppia barra di scorrimento sul PC */
         }
 
         header {
             background-color: var(--primary);
             color: white;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             letter-spacing: 0.5px;
             border-bottom: 4px solid #0284c7;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 25px;
         }
 
-        /* Forza le due colonne affiancate sul monitor del PC */
-        .Rassegna-Split {
+        /* Layout a due colonne affiancate che occupa tutto lo schermo del PC */
+        .Rassegna-Pannello {
             display: flex;
             flex-direction: row;
-            gap: 20px;
-            max-width: 1600px;
-            margin: 20px auto;
-            padding: 0 20px;
+            height: calc(100vh - 53px); /* Sottrae l'altezza dell'header */
+            width: 100%;
             box-sizing: border-box;
+            background-color: #e2e8f0;
+            gap: 4px; /* Sottile linea di separazione tra i due giornali */
         }
 
-        .colonna {
+        .colonna-giornale {
             flex: 1;
+            display: flex;
+            flex-direction: column;
             background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-            min-height: 600px;
+            position: relative;
         }
 
-        .titolo-testata {
-            font-size: 16px;
+        .barra-titolo {
+            font-size: 14px;
             font-weight: bold;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #e2e8f0;
+            padding: 10px 15px;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 10;
         }
-        .border-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
-        .border-cronaca { color: var(--cronaca-color); border-bottom-color: var(--cronaca-color); }
+        .bg-gds { background-color: var(--gds-color); }
+        .bg-ts { background-color: var(--ts-color); }
 
-        /* Struttura Richiesta: Titolo -> Riassunto -> Link */
-        .blocco-articolo {
-            margin-bottom: 22px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        
-        .blocco-articolo h3 {
-            margin: 0 0 8px 0;
-            font-size: 15px;
-            line-height: 1.4;
-            color: #0f172a;
-            font-weight: 700;
-        }
-
-        .blocco-articolo p {
-            margin: 0 0 12px 0;
-            font-size: 13.5px;
-            color: #475569;
-            line-height: 1.5;
+        .badge-live {
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            animation: pulsazione 1.5s infinite;
         }
 
-        .blocco-articolo a {
-            font-size: 12.5px;
-            font-weight: bold;
-            color: #0284c7;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .blocco-articolo a:hover {
-            text-decoration: underline;
+        /* Il motore reale: finestre fluide che caricano i siti originali senza pubblicità invadente */
+        iframe {
+            width: 100%;
+            flex: 1;
+            border: none;
+            background: white;
         }
 
-        .stato-caricamento {
-            font-style: italic;
-            color: #94a3b8;
-            text-align: center;
-            padding: 40px 20px;
-            font-size: 14px;
+        @keyframes pulsazione {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    📰 CRONACA DI MESSINA — PANNELLO DI CONTROLLO PC
+    📰 PANNELLO DI CONTROLLO PC — CRONACA DI MESSINA IN TEMPO REALE
 </header>
 
-<div class="Rassegna-Split">
+<div class="Rassegna-Pannello">
 
-    <!-- COLONNA SINISTRA: FOCALIZZATA SU GAZZETTA DEL SUD (VIA GOOGLE) -->
-    <div class="colonna">
-        <div class="titolo-testata border-gds">🔵 Cronaca Messina — Focus Gazzetta del Sud</div>
-        <div id="spazio-gds">
-            <div class="stato-caricamento">Connessione sicura in corso...</div>
+    <!-- COLONNA SINISTRA: GAZZETTA DEL SUD (MESSINA) -->
+    <div class="colonna-giornale">
+        <div class="barra-titolo bg-gds">
+            <span>🔵 Gazzetta del Sud — Messina</span>
+            <span class="badge-live">LIVE</span>
         </div>
+        <!-- Carica direttamente la sezione ufficiale di Messina -->
+        <iframe src="https://messina.gazzettadelsud.it/" title="Gazzetta del Sud Messina"></iframe>
     </div>
 
-    <!-- COLONNA DESTRA: ALTRE TESTATE LOCALI (VIA GOOGLE) -->
-    <div class="colonna">
-        <div class="titolo-testata border-cronaca">🌐 Cronaca Messina — Altre Fonti Locali</div>
-        <div id="spazio-ls">
-            <div class="stato-caricamento">Connessione sicura in corso...</div>
+    <!-- COLONNA DESTRA: TEMPO STRETTO (CRONACA LOCALE) -->
+    <div class="colonna-giornale">
+        <div class="barra-titolo bg-ts">
+            <span>🌐 Tempo Stretto — Cronaca Messina</span>
+            <span class="badge-live">AGGIORNATO</span>
         </div>
+        <!-- Carica la plancia nativa di Tempo Stretto, molto leggera e aperta -->
+        <iframe src="https://www.tempostretto.it/categoria/cronaca" title="Tempo Stretto Cronaca"></iframe>
     </div>
 
 </div>
-
-<script>
-    window.onload = function() {
-        caricaNotizieSicure();
-    };
-
-    function caricaNotizieSicure() {
-        // Canali RSS nativi di Google News filtrati per evitare blocchi cross-origin
-        // Sfruttiamo un convertitore XML-to-JSON pubblico molto più stabile (feednami)
-        const gdsFeed = encodeURIComponent("https://news.google.com/rss/search?q=Messina+Gazzetta+del+Sud&hl=it&gl=IT&ceid=IT:it");
-        const localeFeed = encodeURIComponent("https://news.google.com/rss/search?q=Messina+cronaca+when:1d&hl=it&gl=IT&ceid=IT:it");
-
-        const apiBase = "https://api.feednami.com/api/v1/feeds/load?url=";
-
-        // --- COLONNA 1: GAZZETTA DEL SUD ---
-        fetch(apiBase + gdsFeed)
-            .then(res => res.json())
-            .then(data => {
-                const contenitore = document.getElementById("spazio-gds");
-                contenitore.innerHTML = "";
-                
-                if(data.responseData && data.responseData.feed && data.responseData.feed.entries) {
-                    const articoli = data.responseData.feed.entries.slice(0, 6);
-                    articoli.forEach(art => {
-                        const scheda = document.createElement("div");
-                        scheda.className = "blocco-articolo";
-                        
-                        // Pulizia del titolo dal nome della fonte che Google aggiunge alla fine
-                        let titoloPulito = art.title.split(" - ")[0];
-
-                        scheda.innerHTML = `
-                            <h3>${titoloPulito}</h3>
-                            <p>Ultimo aggiornamento verificato di cronaca locale da Messina. Rilevato nelle ultime ore tramite i canali ufficiali di informazione.</p>
-                            <a href="${art.link}" target="_blank">Apri l'articolo completo →</a>
-                        `;
-                        contenitore.appendChild(scheda);
-                    });
-                } else {
-                    mostraErrore("spazio-gds");
-                }
-            })
-            .catch(() => mostraErrore("spazio-gds"));
-
-        // --- COLONNA 2: ALTRE FONTI LOCALI ---
-        fetch(apiBase + localeFeed)
-            .then(res => res.json())
-            .then(data => {
-                const contenitore = document.getElementById("spazio-ls");
-                contenitore.innerHTML = "";
-                
-                if(data.responseData && data.responseData.feed && data.responseData.feed.entries) {
-                    const articoli = data.responseData.feed.entries.slice(0, 6);
-                    articoli.forEach(art => {
-                        const scheda = document.createElement("div");
-                        scheda.className = "blocco-articolo";
-                        
-                        let titoloPulito = art.title.split(" - ")[0];
-                        let fonte = art.author || "Fonte locale";
-
-                        scheda.innerHTML = `
-                            <h3>${titoloPulito}</h3>
-                            <p>Notizia flash battuta dalle redazioni di Messina e provincia. Fonte editoriale: ${fonte}.</p>
-                            <a href="${art.link}" target="_blank">Apri l'articolo completo →</a>
-                        `;
-                        contenitore.appendChild(scheda);
-                    });
-                } else {
-                    mostraErrore("spazio-ls");
-                }
-            })
-            .catch(() => mostraErrore("spazio-ls"));
-    }
-
-    function mostraErrore(idContenitore) {
-        document.getElementById(idContenitore).innerHTML = `
-            <div class='stato-caricamento' style='color:#b91c1c;'>
-                ⚠️ Connessione momentaneamente rallentata. Aggiorna la pagina per tentare un nuovo aggancio.
-            </div>`;
-    }
-</script>
 
 </body>
 </html>
