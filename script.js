@@ -8,93 +8,105 @@ function caricaNotizieVere() {
     const containerGds = document.getElementById("feed-gds");
     const containerLs = document.getElementById("feed-ls");
     
-    containerGds.innerHTML = '<div class="loading">Scaricano gli ultimi titoli veri della Gazzetta...</div>';
-    containerLs.innerHTML = '<div class="loading">Scaricano gli ultimi titoli veri de La Sicilia...</div>';
+    containerGds.innerHTML = '<div class="loading">⏳ Lettura diretta della redazione Gazzetta del Sud...</div>';
+    containerLs.innerHTML = '<div class="loading">⏳ Lettura diretta della redazione La Sicilia...</div>';
 
-    // 1. IMPOSTAZIONE URL DEI FEED REALI DEI GIORNALI
-    let urlRssGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/"; // Messina di base
-    let urlRssLs = "https://www.lasicilia.it/rss/messina/"; // Messina di base
+    // 1. LINK DEI FEED RSS UFFICIALI E REALI
+    let urlRssGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/"; 
+    let urlRssLs = "https://www.lasicilia.it/rss/messina/"; 
 
     if (area === "RC") {
-        urlRssGds = "https://gazzettadelsud.it/rss/reggio-95df21a0-ba11-4770-bcbf-9195feee637d/"; // Reggio Calabria
-        urlRssLs = "https://www.lasicilia.it/rss/calabria/"; // La Sicilia usa il canale Calabria per Reggio
+        urlRssGds = "https://gazzettadelsud.it/rss/reggio-95df21a0-ba11-4770-bcbf-9195feee637d/"; 
+        urlRssLs = "https://www.lasicilia.it/rss/calabria/"; 
     }
 
-    // Utilizziamo un convertitore pubblico e gratuito (rss2json) per superare i blocchi di sicurezza (CORS) del telefono
-    const proxyRss = "https://api.rss2json.com/v1/api.json?rss_url=";
+    // Utilizziamo il proxy AllOrigins (sicuro e senza limiti di sovraccarico) per bypassare il blocco CORS del browser
+    const proxyInvisibile = "https://api.allorigins.win/get?url=";
 
-    // --- CARICAMENTO GAZZETTA DEL SUD ---
-    fetch(proxyRss + encodeURIComponent(urlRssGds))
-        .then(response => response.json())
+    // --- ELABORAZIONE GAZZETTA DEL SUD ---
+    fetch(proxyInvisibile + encodeURIComponent(urlRssGds))
+        .then(response => {
+            if (response.ok) return response.json();
+            throw new Error('Rete non rispondente');
+        })
         .then(data => {
+            // AllOrigins restituisce il file XML originale dentro una stringa chiamata data.contents
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+            const items = xmlDoc.getElementsByTagName("item");
+
             containerGds.innerHTML = "";
-            if (data.status === "ok" && data.items.length > 0) {
-                // Prendiamo le prime 4 notizie più recenti di oggi
-                data.items.slice(0, 4).forEach(item => {
+
+            if (items.length > 0) {
+                // Prende i 5 articoli più recenti in assoluto
+                for (let i = 0; i < Math.min(items.length, 5); i++) {
+                    const titolo = items[i].getElementsByTagName("title")[0]?.textContent || "Titolo non disponibile";
+                    const link = items[i].getElementsByTagName("link")[0]?.textContent || "#";
+                    let desc = items[i].getElementsByTagName("description")[0]?.textContent || "";
+                    
+                    // Pulizia tag HTML interni al testo
+                    desc = desc.replace(/<[^>]*>/g, '');
+                    if (desc.length > 140) desc = desc.substring(0, 140) + "...";
+                    if (!desc) desc = "Clicca per leggere i dettagli della notizia direttamente sul portale.";
+
                     const card = document.createElement("div");
                     card.className = "news-card gds";
-                    
-                    // Pulizia del testo della descrizione se troppo lungo
-                    let descrizione = item.description ? item.description.replace(/<[^>]*>/g, '') : "Clicca sul link per leggere l'articolo completo.";
-                    if (descrizione.length > 140) descrizione = descrizione.substring(0, 140) + "...";
-
                     card.innerHTML = `
-                        <h3>${item.title}</h3>
-                        <p>${descrizione}</p>
-                        <div class="meta">⏱️ Pubblicato il: ${formattaDataRss(item.pubDate)}</div>
-                        <a href="${item.link}" target="_blank">Leggi l'articolo originale →</a>
+                        <h3>${titolo}</h3>
+                        <p>${desc}</p>
+                        <a href="${link}" target="_blank">Leggi la notizia vera su Gazzetta del Sud →</a>
                     `;
                     containerGds.appendChild(card);
-                });
+                }
             } else {
-                containerGds.innerHTML = "<div class='loading'>Nessuna notizia recente trovata nel feed o redazione temporaneamente non raggiungibile.</div>";
+                containerGds.innerHTML = "<div class='loading'>⚠️ Il server della Gazzetta non ha trasmesso notizie in questo momento. Riprova tra pochi minuti.</div>";
             }
         })
-        .catch(() => {
-            containerGds.innerHTML = "<div class='loading'>❌ Errore di connessione al server della Gazzetta.</div>";
+        .catch(error => {
+            console.error(error);
+            containerGds.innerHTML = "<div class='loading'>❌ Errore tecnico di ricezione dati dalla redazione Gazzetta.</div>";
         });
 
-    // --- CARICAMENTO LA SICILIA ---
-    fetch(proxyRss + encodeURIComponent(urlRssLs))
-        .then(response => response.json())
+
+    // --- ELABORAZIONE LA SICILIA ---
+    fetch(proxyInvisibile + encodeURIComponent(urlRssLs))
+        .then(response => {
+            if (response.ok) return response.json();
+            throw new Error('Rete non rispondente');
+        })
         .then(data => {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+            const items = xmlDoc.getElementsByTagName("item");
+
             containerLs.innerHTML = "";
-            if (data.status === "ok" && data.items.length > 0) {
-                // Prendiamo le prime 4 notizie più recenti di oggi
-                data.items.slice(0, 4).forEach(item => {
+
+            if (items.length > 0) {
+                // Prende i 5 articoli più recenti in assoluto
+                for (let i = 0; i < Math.min(items.length, 5); i++) {
+                    const titolo = items[i].getElementsByTagName("title")[0]?.textContent || "Titolo non disponibile";
+                    const link = items[i].getElementsByTagName("link")[0]?.textContent || "#";
+                    let desc = items[i].getElementsByTagName("description")[0]?.textContent || "";
+                    
+                    desc = desc.replace(/<[^>]*>/g, '');
+                    if (desc.length > 140) desc = desc.substring(0, 140) + "...";
+                    if (!desc) desc = "Clicca per leggere i dettagli della notizia direttamente sul portale.";
+
                     const card = document.createElement("div");
                     card.className = "news-card ls";
-                    
-                    let descrizione = item.description ? item.description.replace(/<[^>]*>/g, '') : "Clicca sul link per leggere l'articolo completo.";
-                    if (descrizione.length > 140) descrizione = descrizione.substring(0, 140) + "...";
-
                     card.innerHTML = `
-                        <h3>${item.title}</h3>
-                        <p>${descrizione}</p>
-                        <div class="meta">⏱️ Pubblicato il: ${formattaDataRss(item.pubDate)}</div>
-                        <a href="${item.link}" target="_blank">Leggi l'articolo originale →</a>
+                        <h3>${titolo}</h3>
+                        <p>${desc}</p>
+                        <a href="${link}" target="_blank">Leggi la notizia vera su La Sicilia →</a>
                     `;
                     containerLs.appendChild(card);
-                });
+                }
             } else {
-                containerLs.innerHTML = "<div class='loading'>Nessuna notizia recente trovata nel feed o redazione temporaneamente non raggiungibile.</div>";
+                containerLs.innerHTML = "<div class='loading'>⚠️ Il server de La Sicilia non ha trasmesso notizie in questo momento. Riprova tra pochi minuti.</div>";
             }
         })
-        .catch(() => {
-            containerLs.innerHTML = "<div class='loading'>❌ Errore di connessione al server de La Sicilia.</div>";
+        .catch(error => {
+            console.error(error);
+            containerLs.innerHTML = "<div class='loading'>❌ Errore tecnico di ricezione dati dalla redazione La Sicilia.</div>";
         });
-}
-
-// Funzione interna per rendere leggibile l'orario di pubblicazione sul telefono
-function formattaDataRss(dataString) {
-    try {
-        const d = new Date(dataString);
-        const giorno = String(d.getDate()).padStart(2, '0');
-        const mese = String(d.getMonth() + 1).padStart(2, '0');
-        const ore = String(d.getHours()).padStart(2, '0');
-        const minuti = String(d.getMinutes()).padStart(2, '0');
-        return `${giorno}/${mese} alle ore ${ore}:${minuti}`;
-    } catch(e) {
-        return dataString;
-    }
 }
