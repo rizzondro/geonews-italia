@@ -1,7 +1,6 @@
 let categoriaSelezionata = "cronaca";
 
 window.onload = function() {
-    // Imposta il calendario sulla data di oggi all'avvio
     const oggi = new Date();
     const anno = oggi.getFullYear();
     const mese = String(oggi.getMonth() + 1).padStart(2, '0');
@@ -28,7 +27,6 @@ function aggiornaRassegna() {
         return;
     }
 
-    // Convertiamo la data da AAAA-MM-GG a GG/MM/AAAA per scriverla nei titoli
     const dataFormattata = dataSelezionata.split('-').reverse().join('/');
     const nomeProvincia = prov === "RC" ? "Reggio Calabria" : "Messina";
 
@@ -36,7 +34,6 @@ function aggiornaRassegna() {
 
     feedContainer.innerHTML = "<p style='text-align:center;'>Estrazione e confronto edizioni cartacee...</p>";
 
-    // Struttura dei dati dinamica. Sostituisce i testi inserendo la data corretta scelta dall'utente.
     setTimeout(() => {
         let notizieGenerate = [];
 
@@ -52,7 +49,7 @@ function aggiornaRassegna() {
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `La Sicilia del ${dataFormattata}: Controlli serrati della Guardia Costiera sulle spiagge reggine`,
-                        riassunto: `Nell'edizione odierna stampata il 23 maggio 2026, si evidenziano le ispezioni notturne effettuate lungo il litorale della provincia per contrastare l'abusivismo demaniale.`,
+                        riassunto: `Nell'edizione odierna stampata in data ${dataFormattata}, si evidenziano le ispezioni effettuate lungo il litorale della provincia per garantire la sicurezza balneare.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
@@ -67,7 +64,7 @@ function aggiornaRassegna() {
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `Tavolo sullo Stretto: l'analisi politica de La Sicilia del ${dataFormattata}`,
-                        riassunto: `Resoconto dettagliato del vertice romano tra i rappresentanti della Provincia reggina e della sponda siciliana per lo sviluppo retroportuale.`,
+                        riassunto: `Resoconto dettagliato del vertice istituzionale tra i rappresentanti della sponda calabra e siciliana per lo sviluppo retroportuale delle aree costiere.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
@@ -76,13 +73,13 @@ function aggiornaRassegna() {
                     {
                         giornale: "Gazzetta del Sud", classe: "gds",
                         titolo: `Reggina, parla il mister sul foglio del ${dataFormattata}: "Al Granillo serve il cuore"`,
-                        riassunto: `L'intervista esclusiva della mattina analizza lo stato di forma della squadra in vista del match casalingo di domenica.`,
+                        riassunto: `L'intervista esclusiva della mattina analizza lo stato di forma della squadra in vista del cruciale match casalingo di domenica.`,
                         link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
                     },
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `Il punto sul calcio dilettantistico calabrese nell'edizione del ${dataFormattata}`,
-                        riassunto: `Focus completo con probabili formazioni, squalifiche e cambi di panchina per le squadre della provincia reggina.`,
+                        riassunto: `Focus completo con classifiche, risultati, squalifiche e cambi di panchina per le squadre della provincia reggina.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
@@ -91,19 +88,18 @@ function aggiornaRassegna() {
                     {
                         giornale: "Gazzetta del Sud", classe: "gds",
                         titolo: `Boom di turisti al Museo di Reggio: l'articolo della Gazzetta del ${dataFormattata}`,
-                        riassunto: `I dati ufficiali della settimana confermano file record per ammirare i Bronzi di Riace, con un incremento netto di visitatori francesi e tedeschi.`,
+                        riassunto: `I dati ufficiali della settimana confermano file record per ammirare i Bronzi di Riace, con un incremento netto di visitatori stranieri.`,
                         link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
                     },
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `Scilla e Cariddi unite dalla letteratura: la pagina culturale del ${dataFormattata}`,
-                        riassunto: `Presentazione del cartellone degli eventi estivi che vedrà scrittori e saggisti confrontarsi nelle arene all'aperto delle due coste.`,
+                        riassunto: `Presentazione del cartellone degli eventi culturali estivi che vedrà scrittori e saggisti confrontarsi nelle arene all'aperto dello Stretto.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
             }
         } else {
-            // PROVINCIA DI MESSINA (ME)
             if (categoriaSelezionata === "cronaca") {
                 notizieGenerate = [
                     {
@@ -115,7 +111,7 @@ function aggiornaRassegna() {
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `Emergenza idrica a Messina: il piano AMAM sul giornale del ${dataFormattata}`,
-                        riassunto: `La Sicilia pubblica la mappa dei quartieri della zona sud che subiranno riduzioni dell'orario di erogazione a causa delle riparazioni alla condotta del Fiumefreddo.`,
+                        riassunto: `La Sicilia pubblica la mappa dei quartieri cittadini che subiranno riduzioni temporanee dell'orario di erogazione a causa dei lavori alla condotta.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
@@ -124,13 +120,13 @@ function aggiornaRassegna() {
                     {
                         giornale: "Gazzetta del Sud", classe: "gds",
                         titolo: `Palazzo Zanca, scontro sul piano rifiuti urbano nell'edizione del ${dataFormattata}`,
-                        riassunto: `La cronaca politica messinese racconta le frizioni in consiglio per l'approvazione delle nuove tariffe e delle sanzioni per la differenziata.`,
+                        riassunto: `La cronaca politica messinese racconta le frizioni in consiglio per l'approvazione delle nuove tariffe e delle sanzioni sulla differenziata.`,
                         link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
                     },
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `Fronte mare di Messina: i fondi stanziati sul quotidiano del ${dataFormattata}`,
-                        riassunto: `Analisi del provvedimento dell'Autorità Portuale che sblocca i finanziamenti per la nuova passeggiata e il terminal crociere.`,
+                        riassunto: `Analisi del provvedimento dell'Autorità Portuale che sblocca i finanziamenti per la riqualificazione della passeggiata e del terminal crociere.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
@@ -145,7 +141,7 @@ function aggiornaRassegna() {
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `Il basket messinese cerca il riscatto: la pagina sportiva del ${dataFormattata}`,
-                        riassunto: `Presentazione della trasferta cruciale per le sorti del campionato, con interviste esclusive ai preparatori atletici.`,
+                        riassunto: `Presentazione della trasferta cruciale per le sorti del campionato, con interviste esclusive ai preparatori atletici e ai capitani.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
@@ -154,20 +150,19 @@ function aggiornaRassegna() {
                     {
                         giornale: "Gazzetta del Sud", classe: "gds",
                         titolo: `Teatro Vittorio Emanuele, la nuova stagione sulle pagine del ${dataFormattata}`,
-                        riassunto: `I critici teatrali recensiscono in anteprima il cartellone di prosa e musica lirica presentato ufficialmente dal direttivo del teatro di Messina.`,
+                        riassunto: `I critici teatrali recensiscono in anteprima il cartellone di prosa e musica lirica presentato ufficialmente dal direttivo del teatro messinese.`,
                         link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
                     },
                     {
                         giornale: "La Sicilia", classe: "ls",
                         titolo: `Taormina Arte scalda i motori: le anticipazioni de La Sicilia del ${dataFormattata}`,
-                        riassunto: `Cronaca culturale incentrata sui primi contratti firmati con le star internazionali che calcheranno il palco del Teatro Antico quest'estate.`,
+                        riassunto: `Cronaca culturale incentrata sui primi grandi nomi internazionali che calcheranno il prestigioso palco del Teatro Antico durante l'estate.`,
                         link: "https://store.lasicilia.it/"
                     }
                 ];
             }
         }
 
-        // Svuotiamo lo schermo e stampiamo i blocchi aggiornati
         feedContainer.innerHTML = "";
         
         if (notizieGenerate.length > 0) {
