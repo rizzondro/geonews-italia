@@ -8,7 +8,7 @@
         :root {
             --primary: #0f172a;
             --gds-color: #1d4ed8;
-            --ls-color: #b91c1c;
+            --ts-color: #0284c7;
             --bg: #f1f5f9;
             --text: #334155;
         }
@@ -33,7 +33,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Forza le due colonne ad essere sempre affiancate sul PC */
         .Rassegna-Split {
             display: flex;
             flex-direction: row;
@@ -63,9 +62,8 @@
             letter-spacing: 0.5px;
         }
         .border-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
-        .border-ls { color: var(--ls-color); border-bottom-color: var(--ls-color); }
+        .border-ts { color: var(--ts-color); border-bottom-color: var(--ts-color); }
 
-        /* Struttura richiesta: Titolo -> Riassunto -> Link poco sotto */
         .blocco-articolo {
             margin-bottom: 22px;
             padding-bottom: 18px;
@@ -120,15 +118,15 @@
     <div class="colonna">
         <div class="titolo-testata border-gds">🔵 Gazzetta del Sud — Messina</div>
         <div id="spazio-gds">
-            <div class="stato-caricamento">Estrazione degli ultimi titoli in corso...</div>
+            <div class="stato-caricamento">Estrazione degli ultimi titoli...</div>
         </div>
     </div>
 
-    <!-- COLONNA DESTRA: LA SICILIA -->
+    <!-- COLONNA DESTRA: TEMPO STRETTO -->
     <div class="colonna">
-        <div class="titolo-testata border-ls">🔴 La Sicilia — Messina</div>
-        <div id="spazio-ls">
-            <div class="stato-caricamento">Estrazione degli ultimi titoli in corso...</div>
+        <div class="titolo-testata border-ts">🌐 Tempo Stretto — Messina Live</div>
+        <div id="spazio-ts">
+            <div class="stato-caricamento">Estrazione degli ultimi titoli...</div>
         </div>
     </div>
 
@@ -140,92 +138,72 @@
     };
 
     function avviaFlussoIntero() {
-        // Usiamo i link diretti delle home page di Messina per essere sicuri di prendere le notizie vere di oggi
-        const targetGds = "https://messina.gazzettadelsud.it/";
-        const targetLs = "https://www.lasicilia.it/messina/";
+        const proxy = "https://api.allorigins.win/get?url=";
+        
+        // Feed aperti e leggibili via codice
+        const targetGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/";
+        const targetTs = "https://www.tempostretto.it/feed";
 
-        // Bypass di sicurezza forzato tramite stringa di testo grezza (allorigins)
-        const bypassUrl = "https://api.allorigins.win/get?url=";
-
-        // --- ELABORAZIONE GAZZETTA DEL SUD ---
-        fetch(bypassUrl + encodeURIComponent(targetGds))
+        // --- GAZZETTA DEL SUD ---
+        fetch(proxy + encodeURIComponent(targetGds))
             .then(res => res.json())
             .then(data => {
                 const parser = new DOMParser();
-                const htmlDoc = parser.parseFromString(data.contents, "text/html");
+                const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+                const articoli = xmlDoc.getElementsByTagName("item");
                 const contenitore = document.getElementById("spazio-gds");
                 contenitore.innerHTML = "";
 
-                // Cerca tutti gli elementi cliccabili che contengono notizie nella pagina
-                const linkNotizie = htmlDoc.querySelectorAll("article a, .news-item a, .entry-title a");
-                let inseriti = 0;
-                let titoliSalvati = new Set();
+                for (let i = 0; i < Math.min(articoli.length, 6); i++) {
+                    const titolo = articoli[i].getElementsByTagName("title")[0]?.textContent || "";
+                    const link = articoli[i].getElementsByTagName("link")[0]?.textContent || "#";
+                    let descrizione = articoli[i].getElementsByTagName("description")[0]?.textContent || "";
+                    
+                    descrizione = descrizione.replace(/<[^>]*>/g, '').substring(0, 130) + "...";
 
-                for (let i = 0; i < linkNotizie.length; i++) {
-                    let titolo = linkNotizie[i].innerText || linkNotizie[i].textContent;
-                    titolo = titolo.trim().replace(/\s+/g, ' ');
-                    let href = linkNotizie[i].getAttribute("href");
-
-                    if (titolo.length > 25 && href && !titoliSalvati.has(titolo) && inseriti < 6) {
-                        titoliSalvati.add(titolo);
-                        if (!href.startsWith("http")) href = "https://messina.gazzettadelsud.it" + href;
-
-                        const scheda = document.createElement("div");
-                        scheda.className = "blocco-articolo";
-                        scheda.innerHTML = `
-                            <h3>${titolo}</h3>
-                            <p>Ultimo aggiornamento flash di cronaca da Messina e provincia. Clicca sul collegamento per visualizzare i dettagli completi sul quotidiano.</p>
-                            <a href="${href}" target="_blank">Leggi la notizia su Gazzetta del Sud →</a>
-                        `;
-                        contenitore.appendChild(scheda);
-                        inseriti++;
-                    }
+                    const scheda = document.createElement("div");
+                    scheda.className = "blocco-articolo";
+                    scheda.innerHTML = `
+                        <h3>${titolo}</h3>
+                        <p>${descrizione || "Apri l'articolo per leggere la sintesi del fatto di cronaca."}</p>
+                        <a href="${link}" target="_blank">Leggi su Gazzetta del Sud →</a>
+                    `;
+                    contenitore.appendChild(scheda);
                 }
-                if(inseriti === 0) contenitore.innerHTML = "<div class='stato-caricamento'>Nessun titolo disponibile al momento.</div>";
             })
             .catch(() => {
-                document.getElementById("spazio-gds").innerHTML = "<div class='stato-caricamento'>⚠️ Errore di ricezione dati da Gazzetta del Sud.</div>";
+                document.getElementById("spazio-gds").innerHTML = "<div class='stato-caricamento'>⚠️ Servizio temporaneamente non disponibile.</div>";
             });
 
-
-        // --- ELABORAZIONE LA SICILIA ---
-        fetch(bypassUrl + encodeURIComponent(targetLs))
+        // --- TEMPO STRETTO (MESSINA) ---
+        fetch(proxy + encodeURIComponent(targetTs))
             .then(res => res.json())
             .then(data => {
                 const parser = new DOMParser();
-                const htmlDoc = parser.parseFromString(data.contents, "text/html");
-                const contenitore = document.getElementById("spazio-ls");
+                const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+                const articoli = xmlDoc.getElementsByTagName("item");
+                const contenitore = document.getElementById("spazio-ts");
                 contenitore.innerHTML = "";
 
-                // Cerca i blocchi di testo e i link nativi del sito de La Sicilia
-                const linkNotizie = htmlDoc.querySelectorAll("article a, .card-news a, h2 a, h3 a");
-                let inseriti = 0;
-                let titoliSalvati = new Set();
+                for (let i = 0; i < Math.min(articoli.length, 6); i++) {
+                    const titolo = articoli[i].getElementsByTagName("title")[0]?.textContent || "";
+                    const link = articoli[i].getElementsByTagName("link")[0]?.textContent || "#";
+                    let descrizione = articoli[i].getElementsByTagName("description")[0]?.textContent || "";
+                    
+                    descrizione = descrizione.replace(/<[^>]*>/g, '').substring(0, 130) + "...";
 
-                for (let i = 0; i < linkNotizie.length; i++) {
-                    let titolo = linkNotizie[i].innerText || linkNotizie[i].textContent;
-                    titolo = titolo.trim().replace(/\s+/g, ' ');
-                    let href = linkNotizie[i].getAttribute("href");
-
-                    if (titolo.length > 25 && href && !titoliSalvati.has(titolo) && inseriti < 6) {
-                        titoliSalvati.add(titolo);
-                        if (!href.startsWith("http")) href = "https://www.lasicilia.it" + href;
-
-                        const scheda = document.createElement("div");
-                        scheda.className = "blocco-articolo";
-                        scheda.innerHTML = `
-                            <h3>${titolo}</h3>
-                            <p>Notizia flash caricata dalla redazione locale di Messina. Clicca sul collegamento per leggere la sintesi ufficiale del fatto di oggi.</p>
-                            <a href="${href}" target="_blank">Leggi la notizia su La Sicilia →</a>
-                        `;
-                        contenitore.appendChild(scheda);
-                        inseriti++;
-                    }
+                    const scheda = document.createElement("div");
+                    scheda.className = "blocco-articolo";
+                    scheda.innerHTML = `
+                        <h3>${titolo}</h3>
+                        <p>${descrizione || "Apri la notizia per leggere tutti i dettagli della cronaca locale."}</p>
+                        <a href="${link}" target="_blank">Leggi su Tempo Stretto →</a>
+                    `;
+                    contenitore.appendChild(scheda);
                 }
-                if(inseriti === 0) contenitore.innerHTML = "<div class='stato-caricamento'>Nessun titolo disponibile al momento.</div>";
             })
             .catch(() => {
-                document.getElementById("spazio-ls").innerHTML = "<div class='stato-caricamento'>⚠️ Errore di ricezione dati da La Sicilia.</div>";
+                document.getElementById("spazio-ts").innerHTML = "<div class='stato-caricamento'>⚠️ Errore di ricezione dati da Tempo Stretto.</div>";
             });
     }
 </script>
