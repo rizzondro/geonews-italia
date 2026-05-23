@@ -6,10 +6,12 @@
     <title>Archivio Cartaceo dello Stretto</title>
     <style>
         :root {
-            --primary: #2b3a42;
-            --accent: #3f51b5;
-            --light: #f5f7fa;
-            --text: #333;
+            --primary: #1e293b;
+            --accent: #0284c7;
+            --light: #f8fafc;
+            --text: #0f172a;
+            --gds-color: #1d4ed8;
+            --ls-color: #b91c1c;
         }
         body {
             font-family: "Georgia", serif;
@@ -26,7 +28,7 @@
             border-bottom: 4px solid var(--accent);
         }
         header h1 { margin: 0; font-size: 26px; font-family: 'Times New Roman', serif; }
-        header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.8; letter-spacing: 1px; }
+        header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.8; letter-spacing: 1px; font-family: sans-serif; }
         
         .container {
             max-width: 650px;
@@ -43,31 +45,30 @@
         label {
             font-weight: bold;
             display: block;
-            margin: 10px 0 5px 0;
-            font-size: 13px;
+            margin: 12px 0 5px 0;
+            font-size: 12px;
             text-transform: uppercase;
-            color: #555;
+            color: #64748b;
+            font-family: sans-serif;
         }
         select, input[type="date"] {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #cbd5e1;
             border-radius: 4px;
             font-size: 15px;
             font-family: sans-serif;
             box-sizing: border-box;
             background-color: #fff;
-            margin-bottom: 5px;
         }
         
         .categories {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
-            margin-top: 5px;
         }
         .btn {
-            background-color: #f0f0f0;
+            background-color: #f1f5f9;
             border: none;
             padding: 12px;
             border-radius: 4px;
@@ -97,7 +98,7 @@
             font-family: sans-serif;
             transition: 0.2s;
         }
-        .btn-print:hover { background-color: #303f9f; }
+        .btn-print:hover { background-color: #0369a1; }
         
         .news-card {
             background: white;
@@ -105,46 +106,52 @@
             border-radius: 4px;
             margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-top: 3px solid #ccc;
         }
+        .news-card.gds { border-top: 4px solid var(--gds-color); }
+        .news-card.ls { border-top: 4px solid var(--ls-color); }
+
         .meta-info {
-            font-size: 12px;
-            color: #666;
+            font-size: 11px;
+            color: #64748b;
             margin-bottom: 10px;
             text-transform: uppercase;
             font-family: sans-serif;
-            border-bottom: 1px dashed #ddd;
+            border-bottom: 1px dashed #e2e8f0;
             padding-bottom: 5px;
+            font-weight: bold;
         }
+        .gds .meta-info { color: var(--gds-color); }
+        .ls .meta-info { color: var(--ls-color); }
+
         .news-card h3 {
             margin: 0 0 10px 0;
-            font-size: 20px;
-            color: #111;
+            font-size: 19px;
+            color: #0f172a;
         }
         .news-card p {
             margin: 0 0 15px 0;
             font-size: 15px;
             line-height: 1.6;
-            color: #444;
+            color: #334155;
         }
         .news-card a {
             display: inline-block;
             color: var(--accent);
             text-decoration: none;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             font-family: sans-serif;
         }
         .news-card a:hover { text-decoration: underline; }
 
-        /* REGOLE DI STAMPA */
+        /* REGOLE DI STAMPA FISICA */
         @media print {
             body { background: white; color: black; font-size: 12pt; }
             .panel, header, label, select, input, .btn, .btn-print { display: none !important; }
             .container { max-width: 100%; width: 100%; margin: 0; padding: 0; }
-            .news-card { box-shadow: none; border: none; border-bottom: 1px solid black; margin-bottom: 20px; padding: 10px 0; page-break-inside: avoid; }
-            .news-card a { color: black; text-decoration: underline; font-size: 10pt; }
-            .print-header { display: block !important; text-align: center; margin-bottom: 30px; border-bottom: 2px solid black; padding-bottom: 10px; }
+            .news-card { box-shadow: none; border: none; border-bottom: 2px solid #000; margin-bottom: 25px; padding: 10px 0; page-break-inside: avoid; }
+            .news-card a { color: black; text-decoration: underline; font-size: 9pt; }
+            .print-header { display: block !important; text-align: center; margin-bottom: 30px; border-bottom: 3px double black; padding-bottom: 10px; }
         }
         .print-header { display: none; }
     </style>
@@ -152,33 +159,27 @@
 <body>
 
 <div class="print-header">
-    <h1 style="font-family:'Times New Roman', serif; margin:0;">RASSEGNA STAMPA DELLO STRETTO</h1>
-    <p id="print-meta-date" style="margin:5px 0 0 0; font-weight:bold; font-family:sans-serif;"></p>
+    <h1 style="font-family:'Times New Roman', serif; margin:0; font-size: 28px;">COMPRENSORIO DELLO STRETTO - RASSEGNA STAMPA</h1>
+    <p id="print-meta-date" style="margin:5px 0 0 0; font-weight:bold; font-family:sans-serif; letter-spacing: 1px;"></p>
 </div>
 
 <header>
     <h1>📰 Rassegna Stampa Stretto</h1>
-    <p>EDIZIONI CARTACEE NAZIONALI E LOCALI</p>
+    <p>EDIZIONI CARTACEE COMPILATE IN UN UNICO FLUSSO</p>
 </header>
 
 <div class="container">
     <div class="panel">
-        <label for="provincia">1. Provincia di riferimento:</label>
+        <label for="provincia">1. Area della Provincia:</label>
         <select id="provincia" onchange="aggiornaRassegna()">
             <option value="RC">Reggio Calabria</option>
             <option value="ME">Messina</option>
         </select>
 
-        <label for="giornale">2. Testata Giornalistica:</label>
-        <select id="giornale" onchange="aggiornaRassegna()">
-            <option value="GDS">Gazzetta del Sud (Edizione Stampata)</option>
-            <option value="LS">La Sicilia (Edizione Stampata)</option>
-        </select>
-
-        <label for="data-ricerca">3. Data Edizione:</label>
+        <label for="data-ricerca">2. Data Edizione Quotidiani:</label>
         <input type="date" id="data-ricerca" onchange="aggiornaRassegna()">
 
-        <label>4. Categoria notizie:</label>
+        <label>3. Scegli la Categoria da confrontare:</label>
         <div class="categories">
             <button class="btn active" id="cat-cronaca" onclick="cambiaCategoria('cronaca')">📰 Cronaca</button>
             <button class="btn" id="cat-politica" onclick="cambiaCategoria('politica')">🏛️ Politica</button>
@@ -186,10 +187,10 @@
             <button class="btn" id="cat-attualita" onclick="cambiaCategoria('attualita')">🌟 Attualità</button>
         </div>
 
-        <button class="btn-print" onclick="avviaStampa()">🖨️ Anteprima di Stampa della Categoria</button>
+        <button class="btn-print" onclick="avviaStampa()">🖨️ Stampa l'estratto comparativo</button>
     </div>
 
-    <!-- Elenco delle notizie -->
+    <!-- Contenitore unico dove appariranno entrambi i giornali -->
     <div id="news-feed"></div>
 </div>
 
