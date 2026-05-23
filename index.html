@@ -201,7 +201,7 @@
         </div>
     </div>
 
-    <!-- COLONNA LA SICILA -->
+    <!-- COLONNA LA SICILIA -->
     <div class="colonna">
         <div class="colonna-header ls">
             <span>🔴 La Sicilia</span>
@@ -226,7 +226,6 @@
     }
 
     function caricaMuriNotizie() {
-        // Usiamo un motore JSON alternativo che estrae i parametri grezzi senza alterazioni di tracciamento
         const proxyGrezzo = "https://api.allorigins.win/get?url=";
         
         const urlGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/";
@@ -251,11 +250,11 @@
                     let linkGrezzo = items[i].getElementsByTagName("link")[0]?.textContent || "";
                     let descrizione = items[i].getElementsByTagName("description")[0]?.textContent || "";
 
-                    // CORREZIONE HARDCODED PER GAZZETTA: Se il link punta alla radice, ricostruiamo la stringa dall'ID notizia
+                    // Se la Gazzetta invia il link tronco della home, proviamo a estrarre il link reale dall'attributo guid o a mantenerlo pulito
                     let linkVerificato = linkGrezzo.trim();
-                    if(linkVerificato === "https://gazzettadelsud.it" || linkVerificato === "https://gazzettadelsud.it/") {
-                        // Estraiamo parole chiave dal titolo per forzare la ricerca dell'articolo
-                        linkVerificato = "https://gazzettadelsud.it/messina/";
+                    let guidText = items[i].getElementsByTagName("guid")[0]?.textContent || "";
+                    if((linkVerificato.endsWith(".it") || linkVerificato.endsWith(".it/")) && guidText.includes("http")) {
+                        linkVerificato = guidText.trim();
                     }
 
                     descrizione = descrizione.replace(/<[^>]*>/g, '').substring(0, 140) + "...";
@@ -287,13 +286,12 @@
                     let linkGrezzo = items[i].getElementsByTagName("link")[0]?.textContent || "";
                     let descrizione = items[i].getElementsByTagName("description")[0]?.textContent || "";
 
-                    // ANALISI E CORREZIONE DEL LINK DE LA SICILIA
                     let linkVerificato = linkGrezzo.trim();
+                    let guidText = items[i].getElementsByTagName("guid")[0]?.textContent || "";
                     
-                    // Se il feed invia il link corto di reindirizzamento trappola, lo forziamo a passare via pulizia assoluta
-                    if (!linkVerificato.includes("/messina/")) {
-                        // Ricostruzione posizionale fissa dell'URL
-                        linkVerificato = linkVerificato.replace("www.lasicilia.it", "www.lasicilia.it/messina");
+                    // CORREZIONE LA SICILIA: se il tag <link> punta alla home, andiamo a prenderci l'URL univoco salvato dentro il tag <guid>
+                    if ((linkVerificato.endsWith(".it") || linkVerificato.endsWith(".it/")) && guidText.includes("http")) {
+                        linkVerificato = guidText.trim();
                     }
 
                     descrizione = descrizione.replace(/<[^>]*>/g, '').substring(0, 140) + "...";
@@ -310,19 +308,15 @@
             }).catch(() => generaSoluzioneEmergenza("feed-ls", "LS"));
     }
 
-    // Strategia militare di bypass: distrugge qualsiasi informazione d'origine e costringe il browser ad agire come un input manuale dell'utente
+    // Pulisce l'origine della richiesta eludendo i blocchi antilink dei giornali
     function forzaAperturaAssoluta(urlScelta) {
-        // Creiamo un frame invisibile temporaneo o usiamo il distruttore di contesto
         const finestrella = window.open('', '_blank');
         if (finestrella) {
             finestrella.opener = null;
             finestrella.document.blur();
             window.focus();
-            
-            // Inietta una navigazione pura che maschera l'origine al 100% eludendo i redirect automatici dei firewall dei giornali
             finestrella.location.replace(urlScelta);
         } else {
-            // Alternativa di emergenza se i popup sono bloccati dalle policy del browser
             const ancora = document.createElement('a');
             ancora.href = urlScelta;
             ancora.rel = 'noreferrer noopener';
@@ -344,7 +338,7 @@
             box.innerHTML = `
                 <h3>${b.t}</h3>
                 <p>${b.d}</p>
-                <button onclick="forzaAperturaAssoluta('${dest}')" class="btn-leggi">Forza Ingresso Canale →</button>
+                <button onclick="forzaAperturaAssoluta('${dest}')" class="btn-leggi">Forza Ingress Canale →</button>
             `;
             con.appendChild(box);
         });
