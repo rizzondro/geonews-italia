@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archivio Cartaceo dello Stretto</title>
+    <title>Pannello Archivi dello Stretto</title>
     <style>
         :root {
-            --primary: #1e293b;
+            --primary: #0f172a;
             --accent: #0284c7;
             --light: #f8fafc;
-            --text: #0f172a;
+            --text: #1e293b;
             --gds-color: #1d4ed8;
             --ls-color: #b91c1c;
         }
         body {
-            font-family: "Georgia", serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--light);
@@ -23,174 +23,146 @@
         header {
             background-color: var(--primary);
             color: white;
-            padding: 25px 15px;
+            padding: 20px 15px;
             text-align: center;
             border-bottom: 4px solid var(--accent);
         }
-        header h1 { margin: 0; font-size: 26px; font-family: 'Times New Roman', serif; }
-        header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.8; letter-spacing: 1px; font-family: sans-serif; }
+        header h1 { margin: 0; font-size: 22px; letter-spacing: 0.5px; }
+        header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.7; }
         
         .container {
-            max-width: 650px;
-            margin: 15px auto;
+            max-width: 500px;
+            margin: 20px auto;
             padding: 0 15px;
         }
         .panel {
             background: white;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             margin-bottom: 20px;
         }
         label {
             font-weight: bold;
             display: block;
-            margin: 12px 0 5px 0;
-            font-size: 12px;
+            margin: 15px 0 6px 0;
+            font-size: 11px;
             text-transform: uppercase;
             color: #64748b;
-            font-family: sans-serif;
+            letter-spacing: 0.5px;
         }
         select, input[type="date"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 15px;
-            font-family: sans-serif;
+            border-radius: 6px;
+            font-size: 16px;
             box-sizing: border-box;
             background-color: #fff;
-        }
-        
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 5px;
-        }
-        .btn {
-            background-color: #f1f5f9;
-            border: none;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            color: var(--primary);
-            font-family: sans-serif;
-        }
-        .btn.active {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .btn-print {
-            width: 100%;
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            font-family: sans-serif;
-            transition: 0.2s;
-        }
-        .btn-print:hover { background-color: #0369a1; }
-        
-        .news-card {
-            background: white;
-            padding: 20px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .news-card.gds { border-top: 4px solid var(--gds-color); }
-        .news-card.ls { border-top: 4px solid var(--ls-color); }
-
-        .meta-info {
-            font-size: 11px;
-            color: #64748b;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            font-family: sans-serif;
-            border-bottom: 1px dashed #e2e8f0;
-            padding-bottom: 5px;
-            font-weight: bold;
-        }
-        .gds .meta-info { color: var(--gds-color); }
-        .ls .meta-info { color: var(--ls-color); }
-
-        .news-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 19px;
             color: #0f172a;
         }
-        .news-card p {
-            margin: 0 0 15px 0;
-            font-size: 15px;
-            line-height: 1.6;
-            color: #334155;
+        
+        .link-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
         }
-        .news-card a {
-            display: inline-block;
-            color: var(--accent);
-            text-decoration: none;
+        .archive-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .archive-card.gds { border-left: 5px solid var(--gds-color); }
+        .archive-card.ls { border-left: 5px solid var(--ls-color); }
+        
+        .card-title {
+            font-size: 14px;
             font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .gds .card-title { color: var(--gds-color); }
+        .ls .card-title { color: var(--ls-color); }
+        
+        .card-date {
             font-size: 13px;
-            font-family: sans-serif;
+            color: #64748b;
+            margin: 0;
         }
-        .news-card a:hover { text-decoration: underline; }
+        
+        .btn-link {
+            display: block;
+            text-align: center;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            transition: background 0.2s;
+            margin-top: 5px;
+        }
+        .gds .btn-link { background-color: var(--gds-color); }
+        .gds .btn-link:hover { background-color: #1e40af; }
+        .ls .btn-link { background-color: var(--ls-color); }
+        .ls .btn-link:hover { background-color: #991b1b; }
 
-        @media print {
-            body { background: white; color: black; font-size: 12pt; }
-            .panel, header, label, select, input, .btn, .btn-print { display: none !important; }
-            .container { max-width: 100%; width: 100%; margin: 0; padding: 0; }
-            .news-card { box-shadow: none; border: none; border-bottom: 2px solid #000; margin-bottom: 25px; padding: 10px 0; page-break-inside: avoid; }
-            .news-card a { color: black; text-decoration: underline; font-size: 9pt; }
-            .print-header { display: block !important; text-align: center; margin-bottom: 30px; border-bottom: 3px double black; padding-bottom: 10px; }
+        .info-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
-        .print-header { display: none; }
     </style>
 </head>
 <body>
 
-<div class="print-header">
-    <h1 style="font-family:'Times New Roman', serif; margin:0; font-size: 28px;">COMPRENSORIO DELLO STRETTO - RASSEGNA STAMPA</h1>
-    <p id="print-meta-date" style="margin:5px 0 0 0; font-weight:bold; font-family:sans-serif; letter-spacing: 1px;"></p>
-</div>
-
 <header>
-    <h1>📰 Rassegna Stampa Stretto</h1>
-    <p>EDIZIONI CARTACEE COMPLETE IN UN UNICO FLUSSO</p>
+    <h1>🔗 Linker Archivi Stretto</h1>
+    <p>ACCESSO DIRETTO ALLA DATA DEL QUOTIDIANO REALE</p>
 </header>
 
 <div class="container">
     <div class="panel">
-        <label for="provincia">1. Area della Provincia:</label>
-        <select id="provincia" onchange="aggiornaRassegna()">
-            <option value="RC">Reggio Calabria</option>
-            <option value="ME">Messina</option>
-        </select>
-
-        <label for="data-ricerca">2. Data Edizione Quotidiani:</label>
-        <input type="date" id="data-ricerca" onchange="aggiornaRassegna()">
-
-        <label>3. Scegli la Categoria da confrontare:</label>
-        <div class="categories">
-            <button class="btn active" id="cat-cronaca" onclick="cambiaCategoria('cronaca')">📰 Cronaca</button>
-            <button class="btn" id="cat-politica" onclick="cambiaCategoria('politica')">🏛️ Politica</button>
-            <button class="btn" id="cat-sport" onclick="cambiaCategoria('sport')">⚽ Sport</button>
-            <button class="btn" id="cat-attualita" onclick="cambiaCategoria('attualita')">🌟 Attualità</button>
+        <div class="info-box">
+            💡 <strong>Come funziona:</strong> Seleziona data e provincia. L'app genererà i link che puntano direttamente ai motori di ricerca d'archivio ufficiali dei giornali per quel giorno specifico.
         </div>
 
-        <button class="btn-print" onclick="avviaStampa()">🖨️ Stampa l'estratto comparativo</button>
+        <label for="provincia">1. Area della Provincia:</label>
+        <select id="provincia" onchange="generazioneLink()">
+            <option value="ME">Messina</option>
+            <option value="RC">Reggio Calabria</option>
+        </select>
+
+        <label for="data-ricerca">2. Data del Quotidiano:</label>
+        <input type="date" id="data-ricerca" onchange="generazioneLink()">
     </div>
 
-    <div id="news-feed"></div>
+    <!-- Contenitore dei Link Generati in Tempo Reale -->
+    <div class="link-container">
+        <!-- Scheda Gazzetta del Sud -->
+        <div class="archive-card gds">
+            <p class="card-title">Gazzetta del Sud (Ed. Messina)</p>
+            <p class="card-date" id="gds-target-date">Seleziona una data...</p>
+            <a id="link-gds" href="#" target="_blank" class="btn-link">Apri Archivio Gazzetta del Sud →</a>
+        </div>
+
+        <!-- Scheda La Sicilia -->
+        <div class="archive-card ls">
+            <p class="card-title">La Sicilia (Ed. Messina)</p>
+            <p class="card-date" id="ls-target-date">Seleziona una data...</p>
+            <a id="link-ls" href="#" target="_blank" class="btn-link">Apri Archivio La Sicilia →</a>
+        </div>
+    </div>
 </div>
 
 <script src="script.js"></script>
