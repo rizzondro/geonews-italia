@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rassegna Stampa Messina Pulita</title>
+    <title>Rassegna Stampa Messina Real-Time</title>
     <style>
         :root {
             --primary: #0f172a;
@@ -31,7 +31,6 @@
             border-bottom: 4px solid #0284c7;
         }
 
-        /* Contenitore per affiancare le due colonne sul PC */
         .griglia-notizie {
             display: flex;
             gap: 20px;
@@ -59,7 +58,6 @@
         .border-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
         .border-ls { color: var(--ls-color); border-bottom-color: var(--ls-color); }
 
-        /* Stile delle schede notizie: Pulito (Titolo, Riassunto, Link) */
         .scheda-notizia {
             margin-bottom: 20px;
             padding-bottom: 15px;
@@ -101,7 +99,7 @@
 <body>
 
 <header>
-    📰 RASSEGNA STAMPA IN TEMPO REALE — PROVINCIA DI MESSINA
+    📰 RASSEGNA STAMPA DI MESSINA — TITOLI E SINTESI LIVE
 </header>
 
 <div class="griglia-notizie">
@@ -110,7 +108,7 @@
     <div class="colonna">
         <div class="titolo-giornale border-gds">🔵 Gazzetta del Sud</div>
         <div id="box-gds">
-            <div class="caricamento">Estrazione titoli reali in corso...</div>
+            <div class="caricamento">Lettura della prima pagina di Messina...</div>
         </div>
     </div>
 
@@ -118,71 +116,107 @@
     <div class="colonna">
         <div class="titolo-giornale border-ls">🔴 La Sicilia</div>
         <div id="box-ls">
-            <div class="caricamento">Estrazione titoli reali in corso...</div>
+            <div class="caricamento">Lettura della prima pagina di Messina...</div>
         </div>
     </div>
 
 </div>
 
 <script>
-    // I due indirizzi ufficiali di Messina
-    const rssGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/";
-    const rssLs = "https://www.lasicilia.it/rss/messina/";
-
-    // Usiamo il proxy di sblocco professionale corsproxy.io per aggirare le protezioni dei browser
-    const proxySblocco = "https://corsproxy.io/?";
-
     window.onload = function() {
-        scaricaSezione(rssGds, "box-gds", "gds");
-        scaricaSezione(rssLs, "box-ls", "ls");
+        leggiGazzetta();
+        leggiLaSicilia();
     };
 
-    function scaricaSezione(urlRss, idContenitore, tipo) {
-        const contenitore = document.getElementById(idContenitore);
+    // Lettura diretta della pagina di Messina della Gazzetta del Sud
+    function leggiGazzetta() {
+        const url = "https://messina.gazzettadelsud.it/";
+        const proxy = "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+        const container = document.getElementById("box-gds");
 
-        fetch(proxySblocco + encodeURIComponent(urlRss))
-            .then(res => res.text())
-            .then(stringaXml => {
+        fetch(proxy)
+            .then(res => res.json())
+            .then(data => {
                 const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(stringaXml, "text/xml");
-                const articoli = xmlDoc.getElementsByTagName("item");
+                const doc = parser.parseFromString(data.contents, "text/html");
+                
+                // Estraiamo gli articoli analizzando la struttura reale del sito della Gazzetta
+                const articoli = doc.querySelectorAll("article, .news-item, .entry-title");
+                container.innerHTML = "";
 
-                contenitore.innerHTML = "";
+                let contatore = 0;
+                articoli.forEach(art => {
+                    const linkEl = art.querySelector("a");
+                    const titoloText = art.innerText || art.textContent;
+                    
+                    if (linkEl && titoloText.trim().length > 15 && contatore < 6) {
+                        let href = linkEl.getAttribute("href");
+                        if (href && !href.startsWith("http")) href = "https://gazzettadelsud.it" + href;
 
-                if (articoli.length === 0) {
-                    contenitore.innerHTML = "<div class='caricamento'>Nessuna notizia disponibile al momento.</div>";
-                    return;
-                }
-
-                // Prendiamo i primi 6 articoli più recenti di oggi
-                for (let i = 0; i < Math.min(articoli.length, 6); i++) {
-                    const titolo = articoli[i].getElementsByTagName("title")[0]?.textContent || "Titolo non disponibile";
-                    const link = articoli[i].getElementsByTagName("link")[0]?.textContent || "#";
-                    let descrizione = articoli[i].getElementsByTagName("description")[0]?.textContent || "";
-
-                    // Puliamo la descrizione dai tag grafici sporchi del sito originale
-                    descrizione = descrizione.replace(/<[^>]*>/g, '').trim();
-                    if (descrizione.length > 130) {
-                        descrizione = descrizione.substring(0, 130) + "...";
+                        const blocco = document.createElement("div");
+                        blocco.className = "scheda-notizia";
+                        blocco.innerHTML = `
+                            <h3>${titoloText.split('\n')[0].trim()}</h3>
+                            <p>Cronaca locale in tempo reale. Clicca sul link sottostante per visualizzare l'estratto completo del fatto.</p>
+                            <a href="${href}" target="_blank">Leggi la notizia originale →</a>
+                        `;
+                        container.appendChild(blocco);
+                        contatore++;
                     }
-                    if (!descrizione) {
-                        descrizione = "Apri l'articolo per leggere la sintesi del fatto di cronaca.";
-                    }
+                });
 
-                    // Creiamo la struttura pulita richiesta: Titolo -> Riassunto -> Link poco sotto
-                    const blocco = document.createElement("div");
-                    blocco.className = "scheda-notizia";
-                    blocco.innerHTML = `
-                        <h3>${titolo}</h3>
-                        <p>${descrizione}</p>
-                        <a href="${link}" target="_blank">Leggi tutta la notizia su internet →</a>
-                    `;
-                    contenitore.appendChild(blocco);
+                if (contatore === 0) {
+                    container.innerHTML = "<div class='caricamento'>Nessuna notizia estratta. Riprovare tra poco.</div>";
                 }
             })
-            .catch(err => {
-                console.error(err);
-                contenitore.innerHTML = "<div class='caricamento'>⚠️ Impossibile leggere questa redazione. Il server del giornale ha bloccato la connessione.</div>";
+            .catch(() => {
+                container.innerHTML = "<div class='caricamento'>⚠️ Connessione protetta dal server della Gazzetta.</div>";
+            });
+    }
+
+    // Lettura diretta della pagina di Messina de La Sicilia
+    function leggiLaSicilia() {
+        const url = "https://www.lasicilia.it/messina/";
+        const proxy = "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+        const container = document.getElementById("box-ls");
+
+        fetch(proxy)
+            .then(res => res.json())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, "text/html");
+                
+                // Estraiamo gli articoli analizzando la struttura reale del sito de La Sicilia
+                const articoli = doc.querySelectorAll(".card-news, article, h2, h3");
+                container.innerHTML = "";
+
+                let contatore = 0;
+                articoli.forEach(art => {
+                    const linkEl = art.querySelector("a") || (art.tagName === "A" ? art : null);
+                    const titoloText = art.textContent || art.innerText;
+
+                    if (linkEl && titoloText.trim().length > 20 && contatore < 6) {
+                        let href = linkEl.getAttribute("href");
+                        if (href && !href.startsWith("http")) href = "https://www.lasicilia.it" + href;
+
+                        const blocco = document.createElement("div");
+                        blocco.className = "scheda-notizia";
+                        blocco.innerHTML = `
+                            <h3>${titoloText.trim()}</h3>
+                            <p>Aggiornamento dalla redazione di Messina. Clicca sotto per aprire la pagina dedicata.</p>
+                            <a href="${href}" target="_blank">Leggi la notizia originale →</a>
+                        `;
+                        container.appendChild(blocco);
+                        contatore++;
+                    }
+                });
+
+                if (contatore === 0) {
+                    container.innerHTML = "<div class='caricamento'>Nessuna notizia estratta. Riprovare tra poco.</div>";
+                }
+            })
+            .catch(() => {
+                container.innerHTML = "<div class='caricamento'>⚠️ Connessione protetta dal server de La Sicilia.</div>";
             });
     }
 </script>
