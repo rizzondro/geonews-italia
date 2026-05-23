@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pannello Archivi dello Stretto</title>
+    <title>Pannello Notizie Messina</title>
     <style>
         :root {
             --primary: #0f172a;
             --accent: #0284c7;
             --light: #f8fafc;
             --text: #1e293b;
-            --gds-color: #1d4ed8;
-            --ls-color: #b91c1c;
+            --gds-color: #0c4a6e;
+            --ls-color: #991b1b;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -27,11 +27,11 @@
             text-align: center;
             border-bottom: 4px solid var(--accent);
         }
-        header h1 { margin: 0; font-size: 22px; letter-spacing: 0.5px; }
+        header h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
         header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.7; }
         
         .container {
-            max-width: 500px;
+            max-width: 480px;
             margin: 20px auto;
             padding: 0 15px;
         }
@@ -39,19 +39,18 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             margin-bottom: 20px;
         }
         label {
             font-weight: bold;
             display: block;
-            margin: 15px 0 6px 0;
-            font-size: 11px;
+            margin: 0 0 8px 0;
+            font-size: 12px;
             text-transform: uppercase;
             color: #64748b;
-            letter-spacing: 0.5px;
         }
-        select, input[type="date"] {
+        input[type="date"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #cbd5e1;
@@ -66,25 +65,21 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-top: 25px;
         }
         .archive-card {
             background: white;
             border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border-top: 4px solid #cbd5e1;
         }
-        .archive-card.gds { border-left: 5px solid var(--gds-color); }
-        .archive-card.ls { border-left: 5px solid var(--ls-color); }
+        .archive-card.gds { border-top-color: var(--gds-color); }
+        .archive-card.ls { border-top-color: var(--ls-color); }
         
         .card-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            text-transform: uppercase;
-            margin: 0;
+            margin: 0 0 4px 0;
         }
         .gds .card-title { color: var(--gds-color); }
         .ls .card-title { color: var(--ls-color); }
@@ -92,7 +87,7 @@
         .card-date {
             font-size: 13px;
             color: #64748b;
-            margin: 0;
+            margin: 0 0 15px 0;
         }
         
         .btn-link {
@@ -104,63 +99,39 @@
             font-weight: bold;
             text-decoration: none;
             color: white;
-            transition: background 0.2s;
-            margin-top: 5px;
+            transition: opacity 0.2s;
         }
         .gds .btn-link { background-color: var(--gds-color); }
-        .gds .btn-link:hover { background-color: #1e40af; }
         .ls .btn-link { background-color: var(--ls-color); }
-        .ls .btn-link:hover { background-color: #991b1b; }
-
-        .info-box {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
+        .btn-link:active { opacity: 0.8; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🔗 Linker Archivi Stretto</h1>
-    <p>ACCESSO DIRETTO ALLA DATA DEL QUOTIDIANO REALE</p>
+    <h1>📰 Archivio Notizie Messina</h1>
+    <p>ACCESSO DIRETTO AI PORTALI WEB LOCALI</p>
 </header>
 
 <div class="container">
     <div class="panel">
-        <div class="info-box">
-            💡 <strong>Come funziona:</strong> Seleziona data e provincia. L'app genererà i link che puntano direttamente ai motori di ricerca d'archivio ufficiali dei giornali per quel giorno specifico.
-        </div>
-
-        <label for="provincia">1. Area della Provincia:</label>
-        <select id="provincia" onchange="generazioneLink()">
-            <option value="ME">Messina</option>
-            <option value="RC">Reggio Calabria</option>
-        </select>
-
-        <label for="data-ricerca">2. Data del Quotidiano:</label>
+        <label for="data-ricerca">Seleziona il giorno da cercare:</label>
         <input type="date" id="data-ricerca" onchange="generazioneLink()">
     </div>
 
-    <!-- Contenitore dei Link Generati in Tempo Reale -->
     <div class="link-container">
-        <!-- Scheda Gazzetta del Sud -->
+        <!-- Gazzetta del Sud - Messina -->
         <div class="archive-card gds">
-            <p class="card-title">Gazzetta del Sud (Ed. Messina)</p>
-            <p class="card-date" id="gds-target-date">Seleziona una data...</p>
-            <a id="link-gds" href="#" target="_blank" class="btn-link">Apri Archivio Gazzetta del Sud →</a>
+            <p class="card-title">Gazzetta del Sud — Messina</p>
+            <p class="card-date" id="gds-target-date">Generazione link...</p>
+            <a id="link-gds" href="#" target="_blank" class="btn-link">Vedi Notizie del Giorno →</a>
         </div>
 
-        <!-- Scheda La Sicilia -->
+        <!-- La Sicilia - Messina -->
         <div class="archive-card ls">
-            <p class="card-title">La Sicilia (Ed. Messina)</p>
-            <p class="card-date" id="ls-target-date">Seleziona una data...</p>
-            <a id="link-ls" href="#" target="_blank" class="btn-link">Apri Archivio La Sicilia →</a>
+            <p class="card-title">La Sicilia — Messina</p>
+            <p class="card-date" id="ls-target-date">Generazione link...</p>
+            <a id="link-ls" href="#" target="_blank" class="btn-link">Vedi Notizie del Giorno →</a>
         </div>
     </div>
 </div>

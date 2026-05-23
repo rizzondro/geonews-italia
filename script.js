@@ -1,5 +1,5 @@
 window.onload = function() {
-    // Inizializza il calendario sulla data odierna
+    // Imposta automaticamente il calendario sulla data odierna all'avvio
     const oggi = new Date();
     const anno = oggi.getFullYear();
     const mese = String(oggi.getMonth() + 1).padStart(2, '0');
@@ -15,27 +15,38 @@ function generazioneLink() {
 
     if (!dataSelezionata) return;
 
-    // Scomponiamo la data per i motori di ricerca dei siti
-    const partiData = dataSelezionata.split('-'); // [AAAA, MM, GG]
+    // Scomponiamo la data nei singoli elementi (Anno, Mese, Giorno)
+    const partiData = dataSelezionata.split('-'); // Risultato: [AAAA, MM, GG]
     const anno = partiData[0];
     const mese = partiData[1];
     const giorno = partiData[2];
     const dataFormattata = `${giorno}/${mese}/${anno}`;
 
-    // Aggiorna i testi descrittivi nelle schede dell'app
-    document.getElementById("gds-target-date").textContent = `Edizione cartacea digitale del ${dataFormattata}`;
-    document.getElementById("ls-target-date").textContent = `Edizione d'archivio del ${dataFormattata}`;
+    // Aggiorna i testi descrittivi sopra i pulsanti dell'interfaccia
+    document.getElementById("gds-target-date").textContent = `Notizie online pubblicate il ${dataFormattata}`;
+    document.getElementById("ls-target-date").textContent = `Articoli d'archivio web del ${dataFormattata}`;
 
-    // 1. GENERAZIONE LINK GAZZETTA DEL SUD
-    // Il portale digitale Nozio/Gazzetta indicizza le edizioni d'archivio o l'e-paper tramite parametri di data
-    const urlBaseGds = "https://gazzettadelsud.it/pagine/edicola-digitale/";
-    // Costruiamo il link forzando i parametri temporali di ricerca se supportati in stringa query, altrimenti punta al selettore d'archivio ufficiale
-    document.getElementById("link-gds").href = `${urlBaseGds}?date=${anno}-${mese}-${giorno}`;
+    // 1. GENERAZIONE LINK REALE: GAZZETTA DEL SUD (Edizione Messina / Reggio)
+    // Il server di Gazzetta del Sud indicizza l'archivio web con la struttura /archivio/anno/mese/giorno/
+    let urlGdsLocale = "https://messina.gazzettadelsud.it";
+    if (prov === "RC") {
+        urlGdsLocale = "https://reggio.gazzettadelsud.it";
+    }
+    
+    // Costruiamo l'URL esatto che punta alla cartella del giorno sul loro server
+    document.getElementById("link-gds").href = `${urlGdsLocale}/archivio/${anno}/${mese}/${giorno}/`;
 
 
-    // 2. GENERAZIONE LINK LA SICILIA
-    // Lo store de La Sicilia organizza l'archivio digitale sfogliabile secondo la struttura delle cartelle temporali dell'e-paper
-    // Esempio url storico: store.lasicilia.it/lasicilia/publications?date=AAAA-MM-GG
-    const urlBaseLs = "https://store.lasicilia.it/publications";
-    document.getElementById("link-ls").href = `${urlBaseLs}?date=${anno}-${mese}-${giorno}`;
+    // 2. GENERAZIONE LINK REALE: LA SICILIA
+    // Il motore di ricerca del sito La Sicilia filtra l'archivio locale tramite query string
+    // Passiamo la data in formato AAAA-MM-GG e blocchiamo l'edizione sulla provincia scelta
+    let edizioneLs = "messina";
+    if (prov === "RC") {
+        edizioneLs = "calabria"; // La Sicilia accorpa la cronaca reggina sotto l'edizione Calabria
+    }
+
+    const urlLsLocale = "https://www.lasicilia.it/ricerca/";
+    
+    // Costruiamo l'URL di ricerca reale iniettando data e area geografica
+    document.getElementById("link-ls").href = `${urlLsLocale}?date=${anno}-${mese}-${giorno}&edition=${edizioneLs}`;
 }
