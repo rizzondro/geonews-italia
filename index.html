@@ -3,103 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notizie Messina - Titoli e Link Diretti</title>
+    <title>Rassegna Stampa Messina Pulita</title>
     <style>
         :root {
             --primary: #0f172a;
-            --accent: #0284c7;
-            --light: #f8fafc;
             --gds-color: #1d4ed8;
             --ls-color: #b91c1c;
+            --bg: #f8fafc;
         }
         
-        html, body {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100%;
-            background-color: var(--light);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: #1e293b;
         }
 
         header {
             background-color: var(--primary);
             color: white;
-            padding: 12px;
+            padding: 15px;
             text-align: center;
-            border-bottom: 4px solid var(--accent);
-        }
-        header h1 { margin: 0; font-size: 18px; letter-spacing: 0.5px; }
-
-        /* Contenitore per affiancare le due sezioni */
-        .Rassegna-Split {
-            display: flex;
-            flex-direction: column;
-            height: calc(100% - 48px);
-            width: 100%;
-        }
-
-        .colonna-giornale {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
-        }
-
-        .insegna-giornale {
-            color: white;
-            padding: 10px 15px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 18px;
             letter-spacing: 0.5px;
+            border-bottom: 4px solid #0284c7;
+        }
+
+        /* Contenitore per affiancare le due colonne sul PC */
+        .griglia-notizie {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .colonna {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .titolo-giornale {
+            font-size: 18px;
+            font-weight: bold;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #e2e8f0;
             text-transform: uppercase;
         }
-        .bg-gds { background-color: var(--gds-color); }
-        .bg-ls { background-color: var(--ls-color); }
+        .border-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
+        .border-ls { color: var(--ls-color); border-bottom-color: var(--ls-color); }
 
-        /* Finestra contenente l'elenco pulito di Google News */
-        .finestra-notizie {
-            width: 100%;
-            flex: 1;
-            border: none;
-            background: #fff;
+        /* Stile delle schede notizie: Pulito (Titolo, Riassunto, Link) */
+        .scheda-notizia {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .scheda-notizia h3 {
+            margin: 0 0 6px 0;
+            font-size: 15px;
+            line-height: 1.4;
+            color: #0f172a;
         }
 
-        /* Se lo schermo è largo (PC o telefono girato in orizzontale) affianca le colonne */
-        @media (min-width: 768px) {
-            .Rassegna-Split {
-                flex-direction: row;
-            }
-            .colonna-giornale:first-child {
-                border-right: 3px solid #cbd5e1;
-            }
+        .scheda-notizia p {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .scheda-notizia a {
+            font-size: 12px;
+            font-weight: bold;
+            color: #0284c7;
+            text-decoration: none;
+        }
+        .scheda-notizia a:hover {
+            text-decoration: underline;
+        }
+
+        .caricamento {
+            font-style: italic;
+            color: #64748b;
+            text-align: center;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>📰 TITOLI E LINK DIRETTI — MESSINA CRONACA</h1>
+    📰 RASSEGNA STAMPA IN TEMPO REALE — PROVINCIA DI MESSINA
 </header>
 
-<div class="Rassegna-Split">
-    
-    <!-- SINISTRA: GAZZETTA DEL SUD (Tramite ricerca sicura Google News) -->
-    <div class="colonna-giornale">
-        <div class="insegna-giornale bg-gds">🔵 Gazzetta del Sud — Ultimi Titoli</div>
-        <iframe class="finestra-notizie" 
-                src="https://news.google.com/publications/CAAqBwgKMKGy0Asw3v7HAw?hl=it&gl=IT&ceid=IT%3Ait">
-        </iframe>
+<div class="griglia-notizie">
+
+    <!-- COLONNA GAZZETTA DEL SUD -->
+    <div class="colonna">
+        <div class="titolo-giornale border-gds">🔵 Gazzetta del Sud</div>
+        <div id="box-gds">
+            <div class="caricamento">Estrazione titoli reali in corso...</div>
+        </div>
     </div>
 
-    <!-- DESTRA: LA SICILIA (Tramite ricerca sicura Google News) -->
-    <div class="colonna-giornale">
-        <div class="insegna-giornale bg-ls">🔴 La Sicilia — Ultimi Titoli</div>
-        <iframe class="finestra-notizie" 
-                src="https://news.google.com/search?q=site%3Alasicilia.it%20messina&hl=it&gl=IT&ceid=IT%3Ait">
-        </iframe>
+    <!-- COLONNA LA SICILIA -->
+    <div class="colonna">
+        <div class="titolo-giornale border-ls">🔴 La Sicilia</div>
+        <div id="box-ls">
+            <div class="caricamento">Estrazione titoli reali in corso...</div>
+        </div>
     </div>
 
 </div>
+
+<script>
+    // I due indirizzi ufficiali di Messina
+    const rssGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/";
+    const rssLs = "https://www.lasicilia.it/rss/messina/";
+
+    // Usiamo il proxy di sblocco professionale corsproxy.io per aggirare le protezioni dei browser
+    const proxySblocco = "https://corsproxy.io/?";
+
+    window.onload = function() {
+        scaricaSezione(rssGds, "box-gds", "gds");
+        scaricaSezione(rssLs, "box-ls", "ls");
+    };
+
+    function scaricaSezione(urlRss, idContenitore, tipo) {
+        const contenitore = document.getElementById(idContenitore);
+
+        fetch(proxySblocco + encodeURIComponent(urlRss))
+            .then(res => res.text())
+            .then(stringaXml => {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(stringaXml, "text/xml");
+                const articoli = xmlDoc.getElementsByTagName("item");
+
+                contenitore.innerHTML = "";
+
+                if (articoli.length === 0) {
+                    contenitore.innerHTML = "<div class='caricamento'>Nessuna notizia disponibile al momento.</div>";
+                    return;
+                }
+
+                // Prendiamo i primi 6 articoli più recenti di oggi
+                for (let i = 0; i < Math.min(articoli.length, 6); i++) {
+                    const titolo = articoli[i].getElementsByTagName("title")[0]?.textContent || "Titolo non disponibile";
+                    const link = articoli[i].getElementsByTagName("link")[0]?.textContent || "#";
+                    let descrizione = articoli[i].getElementsByTagName("description")[0]?.textContent || "";
+
+                    // Puliamo la descrizione dai tag grafici sporchi del sito originale
+                    descrizione = descrizione.replace(/<[^>]*>/g, '').trim();
+                    if (descrizione.length > 130) {
+                        descrizione = descrizione.substring(0, 130) + "...";
+                    }
+                    if (!descrizione) {
+                        descrizione = "Apri l'articolo per leggere la sintesi del fatto di cronaca.";
+                    }
+
+                    // Creiamo la struttura pulita richiesta: Titolo -> Riassunto -> Link poco sotto
+                    const blocco = document.createElement("div");
+                    blocco.className = "scheda-notizia";
+                    blocco.innerHTML = `
+                        <h3>${titolo}</h3>
+                        <p>${descrizione}</p>
+                        <a href="${link}" target="_blank">Leggi tutta la notizia su internet →</a>
+                    `;
+                    contenitore.appendChild(blocco);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                contenitore.innerHTML = "<div class='caricamento'>⚠️ Impossibile leggere questa redazione. Il server del giornale ha bloccato la connessione.</div>";
+            });
+    }
+</script>
 
 </body>
 </html>
