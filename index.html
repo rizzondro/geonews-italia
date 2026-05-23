@@ -12,7 +12,7 @@
             --text: #333;
         }
         body {
-            font-family: "Georgia", serif; /* Stile stile giornale cartaceo */
+            font-family: "Georgia", serif;
             margin: 0;
             padding: 0;
             background-color: var(--light);
@@ -57,7 +57,32 @@
             font-family: sans-serif;
             box-sizing: border-box;
             background-color: #fff;
+            margin-bottom: 5px;
         }
+        
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .btn {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--primary);
+            font-family: sans-serif;
+        }
+        .btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
         .btn-print {
             width: 100%;
             background-color: var(--accent);
@@ -97,18 +122,28 @@
             color: #111;
         }
         .news-card p {
-            margin: 0;
+            margin: 0 0 15px 0;
             font-size: 15px;
             line-height: 1.6;
             color: #444;
         }
+        .news-card a {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            font-family: sans-serif;
+        }
+        .news-card a:hover { text-decoration: underline; }
 
-        /* STILI SPECIALI PER LA STAMPA */
+        /* REGOLE DI STAMPA */
         @media print {
             body { background: white; color: black; font-size: 12pt; }
-            .panel, header, label, select, input, .btn-print { display: none !important; } /* Nasconde i menu */
+            .panel, header, label, select, input, .btn, .btn-print { display: none !important; }
             .container { max-width: 100%; width: 100%; margin: 0; padding: 0; }
             .news-card { box-shadow: none; border: none; border-bottom: 1px solid black; margin-bottom: 20px; padding: 10px 0; page-break-inside: avoid; }
+            .news-card a { color: black; text-decoration: underline; font-size: 10pt; }
             .print-header { display: block !important; text-align: center; margin-bottom: 30px; border-bottom: 2px solid black; padding-bottom: 10px; }
         }
         .print-header { display: none; }
@@ -116,10 +151,9 @@
 </head>
 <body>
 
-<!-- Questo blocco si vedrà SOLTANTO nella stampa -->
 <div class="print-header">
     <h1 style="font-family:'Times New Roman', serif; margin:0;">RASSEGNA STAMPA DELLO STRETTO</h1>
-    <p id="print-meta-date" style="margin:5px 0 0 0; font-weight:bold;"></p>
+    <p id="print-meta-date" style="margin:5px 0 0 0; font-weight:bold; font-family:sans-serif;"></p>
 </div>
 
 <header>
@@ -135,7 +169,7 @@
             <option value="ME">Messina</option>
         </select>
 
-        <label for="giornale">2. Testata Giornalistica (Cartacea):</label>
+        <label for="giornale">2. Testata Giornalistica:</label>
         <select id="giornale" onchange="aggiornaRassegna()">
             <option value="GDS">Gazzetta del Sud (Edizione Stampata)</option>
             <option value="LS">La Sicilia (Edizione Stampata)</option>
@@ -144,10 +178,18 @@
         <label for="data-ricerca">3. Data Edizione:</label>
         <input type="date" id="data-ricerca" onchange="aggiornaRassegna()">
 
-        <button class="btn-print" onclick="avviaStampa()">🖨️ Anteprima di Stampa e Riassunti</button>
+        <label>4. Categoria notizie:</label>
+        <div class="categories">
+            <button class="btn active" id="cat-cronaca" onclick="cambiaCategoria('cronaca')">📰 Cronaca</button>
+            <button class="btn" id="cat-politica" onclick="cambiaCategoria('politica')">🏛️ Politica</button>
+            <button class="btn" id="cat-sport" onclick="cambiaCategoria('sport')">⚽ Sport</button>
+            <button class="btn" id="cat-attualita" onclick="cambiaCategoria('attualita')">🌟 Attualità</button>
+        </div>
+
+        <button class="btn-print" onclick="avviaStampa()">🖨️ Anteprima di Stampa della Categoria</button>
     </div>
 
-    <!-- Elenco delle notizie del giorno -->
+    <!-- Elenco delle notizie -->
     <div id="news-feed"></div>
 </div>
 
