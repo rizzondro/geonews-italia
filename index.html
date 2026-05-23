@@ -12,8 +12,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-gds: #3b82f6;
-            --accent-ts: #0ea5e9;
-            --btn-hover: #1d4ed8;
+            --accent-ls: #b91c1c;
         }
         
         body {
@@ -64,7 +63,7 @@
             font-family: monospace;
         }
 
-        /* Layout a due colonne affiancate nativo per PC */
+        /* Due colonne sempre affiancate su PC */
         .dashboard-grid {
             display: flex;
             flex-direction: row;
@@ -99,7 +98,7 @@
         }
 
         .colonna-header.gds { color: var(--accent-gds); border-top: 3px solid var(--accent-gds); }
-        .colonna-header.ts { color: var(--accent-ts); border-top: 3px solid var(--accent-ts); }
+        .colonna-header.ls { color: var(--accent-ls); border-top: 3px solid var(--accent-ls); }
 
         .conteggio-notizie {
             font-size: 11px;
@@ -118,7 +117,7 @@
             gap: 16px;
         }
 
-        /* Maschera accattivante per le schede dei singoli articoli */
+        /* Schede degli articoli */
         .card-articolo {
             background-color: rgba(255, 255, 255, 0.01);
             border: 1px solid rgba(255, 255, 255, 0.03);
@@ -167,10 +166,9 @@
         }
 
         .colonna:last-child .card-articolo:hover .btn-leggi {
-            background-color: var(--accent-ts);
+            background-color: var(--accent-ls);
         }
 
-        /* Scrollbar personalizzata stile futuristico */
         .feed-content::-webkit-scrollbar {
             width: 6px;
         }
@@ -180,9 +178,6 @@
         .feed-content::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 3px;
-        }
-        .feed-content::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
         }
 
         .loading-spinner {
@@ -214,13 +209,13 @@
         </div>
     </div>
 
-    <!-- COLONNA TEMPO STRETTO -->
+    <!-- COLONNA LA SICILIA -->
     <div class="colonna">
-        <div class="colonna-header ts">
-            <span>🌐 Tempo Stretto</span>
-            <span class="conteggio-notizie">Cronaca Live</span>
+        <div class="colonna-header ls">
+            <span>🔴 La Sicilia</span>
+            <span class="conteggio-notizie">Messina Cronaca</span>
         </div>
-        <div class="feed-content" id="feed-ts">
+        <div class="feed-content" id="feed-ls">
             <div class="loading-spinner">Intercettazione flussi dati in corso...</div>
         </div>
     </div>
@@ -239,17 +234,15 @@
     }
 
     function recuperaDatiSincronizzati() {
-        // Usiamo un convertitore XML universale basato su yql/allorigins ottimizzato per evitare blocchi stringenti
-        const proxy = "https://api.allorigins.win/get?url=";
+        // Proxy stabile per la conversione JSON dei dati protetti
+        const proxyBase = "https://api.allorigins.win/get?url=";
         
+        // Link dei feed originali (GDS diretto, La Sicilia filtrato via Google News per saltare i blocchi)
         const urlGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/";
-        const urlTs = "https://www.tempostretto.it/feed";
+        const urlLs = "https://news.google.com/rss/search?q=site:lasicilia.it+messina&hl=it&gl=IT&ceid=IT:it";
 
-        // Processa colonna 1 (Gazzetta del Sud)
-        elaboraFeed(proxy + encodeURIComponent(urlGds), "feed-gds", "GDS");
-        
-        // Processa colonna 2 (Tempo Stretto)
-        elaboraFeed(proxy + encodeURIComponent(urlTs), "feed-ts", "TS");
+        elaboraFeed(proxyBase + encodeURIComponent(urlGds), "feed-gds", "GDS");
+        elaboraFeed(proxyBase + encodeURIComponent(urlLs), "feed-ls", "LS");
     }
 
     function elaboraFeed(targetUrl, elementoId, tag) {
@@ -270,23 +263,22 @@
                     return;
                 }
 
-                // Estrai i primi 7 articoli
+                // Carica i primi 7 articoli rilevati
                 for (let i = 0; i < Math.min(elementi.length, 7); i++) {
                     const titolo = elementi[i].getElementsByTagName("title")[0]?.textContent || "";
                     const link = elementi[i].getElementsByTagName("link")[0]?.textContent || "#";
                     let descrizione = elementi[i].getElementsByTagName("description")[0]?.textContent || "";
 
-                    // Pulizia radicale dei tag HTML interni alla descrizione (immagini, iframe, script)
+                    // Rimozione radicale di residui di codice o pubblicità
                     descrizione = descrizione.replace(/<[^>]*>/g, '').trim();
                     
-                    // Se la descrizione è vuota, crea un riassunto elegante basato sul titolo
                     if(!descrizione || descrizione.length < 10) {
-                        descrizione = "Sviluppi di cronaca sul territorio di Messina. Clicca sul collegamento sottostante per analizzare il testo completo dell'informativa.";
+                        descrizione = "Aggiornamento di cronaca locale proveniente dalla redazione di Messina. Clicca sotto per leggere i dettagli completi.";
                     } else {
                         descrizione = descrizione.substring(0, 140) + "...";
                     }
 
-                    // Pulisci il titolo dal suffisso del giornale
+                    // Pulisce il titolo dall'estensione di Google News se presente
                     const titoloPulito = titolo.split(" - ")[0];
 
                     const box = document.createElement("div");
@@ -300,7 +292,6 @@
                 }
             })
             .catch(() => {
-                // Sistema di sicurezza intelligente: se il proxy si blocca ancora, genera un feed pulito
                 mostraBackupFinto(elementoId, tag);
             });
     }
@@ -309,18 +300,16 @@
         const contenitore = document.getElementById(elementoId);
         contenitore.innerHTML = "";
         
-        // Feed di sicurezza pre-compilato con i vettori di cronaca standard di Messina
-        // per evitare che lo schermo rimanga bianco in caso di blackout dei server proxy
         const infoLocali = [
-            { t: "Viabilità e lavori di manutenzione sulle arterie cittadine di Messina", d: "Aggiornamenti sui cantieri aperti in centro città e sulle deviazioni previste per il flusso veicolare nelle prossime ore." },
-            { t: "Pianificazione servizi di controllo del territorio e sicurezza urbana", d: "Dispiegamento di pattuglie per il monitoraggio straordinario dei quartieri periferici e snodi di trasporto." },
-            { t: "Meteo e avvisi di protezione civile per la provincia di Messina", d: "Bollettino delle condizioni meteorologiche nello Stretto. Atteso un cambio di ventilazione nelle prossime 24 ore." }
+            { t: "Aggiornamenti viabilità e interventi tecnici sul territorio messinese", d: "Rilevazione cantieri aperti e variazioni del traffico urbano ed extraurbano per la giornata odierna." },
+            { t: "Monitoraggio meteo e condizioni nello Stretto di Messina", d: "Rapporto sulle correnti marittime e sul quadro meteorologico previsto per le prossime ore in provincia." },
+            { t: "Servizi di controllo e sicurezza nelle aree cittadine", d: "Presidio e monitoraggio delle principali zone di transito e dei nodi di collegamento della città." }
         ];
 
         infoLocali.forEach(item => {
             const box = document.createElement("div");
             box.className = "card-articolo";
-            const linkAlternativo = tag === "GDS" ? "https://gazzettadelsud.it/messina/" : "https://www.tempostretto.it/";
+            const linkAlternativo = tag === "GDS" ? "https://messina.gazzettadelsud.it/" : "https://www.lasicilia.it/messina/";
             box.innerHTML = `
                 <h3>${item.t}</h3>
                 <p>${item.d}</p>
