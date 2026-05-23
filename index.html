@@ -9,7 +9,6 @@
             --primary: #0f172a;
             --accent: #0284c7;
             --light: #f8fafc;
-            --text: #1e293b;
             --gds-color: #1d4ed8;
             --ls-color: #b91c1c;
         }
@@ -18,26 +17,24 @@
             margin: 0;
             padding: 0;
             background-color: var(--light);
-            color: var(--text);
         }
         header {
             background-color: var(--primary);
             color: white;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             border-bottom: 4px solid var(--accent);
         }
-        header h1 { margin: 0; font-size: 20px; }
-        header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.8; }
+        header h1 { margin: 0; font-size: 18px; }
         
         .container {
-            max-width: 600px;
-            margin: 15px auto;
+            max-width: 800px;
+            margin: 10px auto;
             padding: 0 10px;
         }
         .panel {
             background: white;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-bottom: 15px;
@@ -46,107 +43,70 @@
             font-weight: bold;
             display: block;
             margin-bottom: 6px;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             color: #64748b;
         }
         select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 16px;
             background-color: #fff;
         }
         
-        .news-section-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin: 20px 0 10px 0;
-            padding-bottom: 5px;
-            border-bottom: 2px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .title-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
-        .title-ls { color: var(--ls-color); border-bottom-color: var(--ls-color); }
-
-        .feed-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .news-card {
+        .news-section {
             background: white;
             border-radius: 8px;
-            padding: 14px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            border-left: 4px solid #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
         }
-        .news-card.gds { border-left-color: var(--gds-color); }
-        .news-card.ls { border-left-color: var(--ls-color); }
-        
-        .news-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 15px;
-            line-height: 1.4;
-            color: #0f172a;
-        }
-        .news-card p {
-            margin: 0 0 10px 0;
-            font-size: 13px;
-            color: #475569;
-            line-height: 1.5;
-        }
-        .news-card .meta {
-            font-size: 11px;
-            color: #94a3b8;
-            font-weight: 500;
-        }
-        .news-card a {
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 13px;
+        .section-header {
+            color: white;
+            padding: 10px 15px;
             font-weight: bold;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #64748b;
             font-size: 14px;
-            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+        .bg-gds { background-color: var(--gds-color); }
+        .bg-ls { background-color: var(--ls-color); }
+
+        /* La finestra che ospita il sito originale */
+        .news-window {
+            width: 100%;
+            height: 450px; /* Altezza ideale per scorrere le notizie sul telefono */
+            border: none;
+            background: #fff;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>📰 Notizie reali dello Stretto</h1>
-    <p>FEED REALI E NOTIZIE DI OGGI IN TEMPO REALE</p>
+    <h1>📰 Rassegna Stampa Reale</h1>
 </header>
 
 <div class="container">
     <div class="panel">
         <label for="provincia">Seleziona la Redazione Locale:</label>
-        <select id="provincia" onchange="caricaNotizieVere()">
+        <select id="provincia" onchange="cambiaRedazione()">
             <option value="ME">Messina (Cronaca & Provincia)</option>
             <option value="RC">Reggio Calabria (Cronaca & Provincia)</option>
         </select>
     </div>
 
-    <!-- SEZIONE GAZZETTA DEL SUD -->
-    <div class="news-section-title title-gds">🔵 GAZZETTA DEL SUD</div>
-    <div id="feed-gds" class="feed-container">
-        <div class="loading">Connessione alla redazione in corso...</div>
+    <!-- SITO GAZZETTA DEL SUD -->
+    <div class="news-section">
+        <div class="section-header bg-gds">🔵 GAZZETTA DEL SUD - LIVE TESTATA</div>
+        <iframe id="iframe-gds" class="news-window" src="https://messina.gazzettadelsud.it/"></iframe>
     </div>
 
-    <!-- SEZIONE LA SICILIA -->
-    <div class="news-section-title title-ls">🔴 LA SICILIA</div>
-    <div id="feed-ls" class="feed-container">
-        <div class="loading">Connessione alla redazione in corso...</div>
+    <!-- SITO LA SICILIA -->
+    <div class="news-section">
+        <div class="section-header bg-ls">🔴 LA SICILIA - LIVE TESTATA</div>
+        <iframe id="iframe-ls" class="news-window" src="https://www.lasicilia.it/messina/"></iframe>
     </div>
 </div>
 
