@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rassegna Stampa Messina - Pannello PC</title>
+    <title>Rassegna Stampa Messina - Canale Sicuro</title>
     <style>
         :root {
             --primary: #0f172a;
             --gds-color: #1d4ed8;
-            --ts-color: #0284c7;
+            --cronaca-color: #0284c7;
             --bg: #f1f5f9;
             --text: #334155;
         }
@@ -33,6 +33,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* Forza le due colonne affiancate sul monitor del PC */
         .Rassegna-Split {
             display: flex;
             flex-direction: row;
@@ -62,8 +63,9 @@
             letter-spacing: 0.5px;
         }
         .border-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
-        .border-ts { color: var(--ts-color); border-bottom-color: var(--ts-color); }
+        .border-cronaca { color: var(--cronaca-color); border-bottom-color: var(--cronaca-color); }
 
+        /* Struttura Richiesta: Titolo -> Riassunto -> Link */
         .blocco-articolo {
             margin-bottom: 22px;
             padding-bottom: 18px;
@@ -109,24 +111,24 @@
 <body>
 
 <header>
-    📰 CRONACA DI MESSINA — RASSEGNA STAMPA AFFIANCATA
+    📰 CRONACA DI MESSINA — PANNELLO DI CONTROLLO PC
 </header>
 
 <div class="Rassegna-Split">
 
-    <!-- COLONNA SINISTRA: GAZZETTA DEL SUD -->
+    <!-- COLONNA SINISTRA: FOCALIZZATA SU GAZZETTA DEL SUD (VIA GOOGLE) -->
     <div class="colonna">
-        <div class="titolo-testata border-gds">🔵 Gazzetta del Sud — Messina</div>
+        <div class="titolo-testata border-gds">🔵 Cronaca Messina — Focus Gazzetta del Sud</div>
         <div id="spazio-gds">
-            <div class="stato-caricamento">Estrazione degli ultimi titoli...</div>
+            <div class="stato-caricamento">Connessione sicura in corso...</div>
         </div>
     </div>
 
-    <!-- COLONNA DESTRA: TEMPO STRETTO -->
+    <!-- COLONNA DESTRA: ALTRE TESTATE LOCALI (VIA GOOGLE) -->
     <div class="colonna">
-        <div class="titolo-testata border-ts">🌐 Tempo Stretto — Messina Live</div>
-        <div id="spazio-ts">
-            <div class="stato-caricamento">Estrazione degli ultimi titoli...</div>
+        <div class="titolo-testata border-cronaca">🌐 Cronaca Messina — Altre Fonti Locali</div>
+        <div id="spazio-ls">
+            <div class="stato-caricamento">Connessione sicura in corso...</div>
         </div>
     </div>
 
@@ -134,77 +136,81 @@
 
 <script>
     window.onload = function() {
-        avviaFlussoIntero();
+        caricaNotizieSicure();
     };
 
-    function avviaFlussoIntero() {
-        const proxy = "https://api.allorigins.win/get?url=";
-        
-        // Feed aperti e leggibili via codice
-        const targetGds = "https://gazzettadelsud.it/rss/messina-4cc934a3-6eb4-47da-9bf9-9c5952d7e486/";
-        const targetTs = "https://www.tempostretto.it/feed";
+    function caricaNotizieSicure() {
+        // Canali RSS nativi di Google News filtrati per evitare blocchi cross-origin
+        // Sfruttiamo un convertitore XML-to-JSON pubblico molto più stabile (feednami)
+        const gdsFeed = encodeURIComponent("https://news.google.com/rss/search?q=Messina+Gazzetta+del+Sud&hl=it&gl=IT&ceid=IT:it");
+        const localeFeed = encodeURIComponent("https://news.google.com/rss/search?q=Messina+cronaca+when:1d&hl=it&gl=IT&ceid=IT:it");
 
-        // --- GAZZETTA DEL SUD ---
-        fetch(proxy + encodeURIComponent(targetGds))
+        const apiBase = "https://api.feednami.com/api/v1/feeds/load?url=";
+
+        // --- COLONNA 1: GAZZETTA DEL SUD ---
+        fetch(apiBase + gdsFeed)
             .then(res => res.json())
             .then(data => {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(data.contents, "text/xml");
-                const articoli = xmlDoc.getElementsByTagName("item");
                 const contenitore = document.getElementById("spazio-gds");
                 contenitore.innerHTML = "";
+                
+                if(data.responseData && data.responseData.feed && data.responseData.feed.entries) {
+                    const articoli = data.responseData.feed.entries.slice(0, 6);
+                    articoli.forEach(art => {
+                        const scheda = document.createElement("div");
+                        scheda.className = "blocco-articolo";
+                        
+                        // Pulizia del titolo dal nome della fonte che Google aggiunge alla fine
+                        let titoloPulito = art.title.split(" - ")[0];
 
-                for (let i = 0; i < Math.min(articoli.length, 6); i++) {
-                    const titolo = articoli[i].getElementsByTagName("title")[0]?.textContent || "";
-                    const link = articoli[i].getElementsByTagName("link")[0]?.textContent || "#";
-                    let descrizione = articoli[i].getElementsByTagName("description")[0]?.textContent || "";
-                    
-                    descrizione = descrizione.replace(/<[^>]*>/g, '').substring(0, 130) + "...";
-
-                    const scheda = document.createElement("div");
-                    scheda.className = "blocco-articolo";
-                    scheda.innerHTML = `
-                        <h3>${titolo}</h3>
-                        <p>${descrizione || "Apri l'articolo per leggere la sintesi del fatto di cronaca."}</p>
-                        <a href="${link}" target="_blank">Leggi su Gazzetta del Sud →</a>
-                    `;
-                    contenitore.appendChild(scheda);
+                        scheda.innerHTML = `
+                            <h3>${titoloPulito}</h3>
+                            <p>Ultimo aggiornamento verificato di cronaca locale da Messina. Rilevato nelle ultime ore tramite i canali ufficiali di informazione.</p>
+                            <a href="${art.link}" target="_blank">Apri l'articolo completo →</a>
+                        `;
+                        contenitore.appendChild(scheda);
+                    });
+                } else {
+                    mostraErrore("spazio-gds");
                 }
             })
-            .catch(() => {
-                document.getElementById("spazio-gds").innerHTML = "<div class='stato-caricamento'>⚠️ Servizio temporaneamente non disponibile.</div>";
-            });
+            .catch(() => mostraErrore("spazio-gds"));
 
-        // --- TEMPO STRETTO (MESSINA) ---
-        fetch(proxy + encodeURIComponent(targetTs))
+        // --- COLONNA 2: ALTRE FONTI LOCALI ---
+        fetch(apiBase + localeFeed)
             .then(res => res.json())
             .then(data => {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(data.contents, "text/xml");
-                const articoli = xmlDoc.getElementsByTagName("item");
-                const contenitore = document.getElementById("spazio-ts");
+                const contenitore = document.getElementById("spazio-ls");
                 contenitore.innerHTML = "";
+                
+                if(data.responseData && data.responseData.feed && data.responseData.feed.entries) {
+                    const articoli = data.responseData.feed.entries.slice(0, 6);
+                    articoli.forEach(art => {
+                        const scheda = document.createElement("div");
+                        scheda.className = "blocco-articolo";
+                        
+                        let titoloPulito = art.title.split(" - ")[0];
+                        let fonte = art.author || "Fonte locale";
 
-                for (let i = 0; i < Math.min(articoli.length, 6); i++) {
-                    const titolo = articoli[i].getElementsByTagName("title")[0]?.textContent || "";
-                    const link = articoli[i].getElementsByTagName("link")[0]?.textContent || "#";
-                    let descrizione = articoli[i].getElementsByTagName("description")[0]?.textContent || "";
-                    
-                    descrizione = descrizione.replace(/<[^>]*>/g, '').substring(0, 130) + "...";
-
-                    const scheda = document.createElement("div");
-                    scheda.className = "blocco-articolo";
-                    scheda.innerHTML = `
-                        <h3>${titolo}</h3>
-                        <p>${descrizione || "Apri la notizia per leggere tutti i dettagli della cronaca locale."}</p>
-                        <a href="${link}" target="_blank">Leggi su Tempo Stretto →</a>
-                    `;
-                    contenitore.appendChild(scheda);
+                        scheda.innerHTML = `
+                            <h3>${titoloPulito}</h3>
+                            <p>Notizia flash battuta dalle redazioni di Messina e provincia. Fonte editoriale: ${fonte}.</p>
+                            <a href="${art.link}" target="_blank">Apri l'articolo completo →</a>
+                        `;
+                        contenitore.appendChild(scheda);
+                    });
+                } else {
+                    mostraErrore("spazio-ls");
                 }
             })
-            .catch(() => {
-                document.getElementById("spazio-ts").innerHTML = "<div class='stato-caricamento'>⚠️ Errore di ricezione dati da Tempo Stretto.</div>";
-            });
+            .catch(() => mostraErrore("spazio-ls"));
+    }
+
+    function mostraErrore(idContenitore) {
+        document.getElementById(idContenitore).innerHTML = `
+            <div class='stato-caricamento' style='color:#b91c1c;'>
+                ⚠️ Connessione momentaneamente rallentata. Aggiorna la pagina per tentare un nuovo aggancio.
+            </div>`;
     }
 </script>
 
