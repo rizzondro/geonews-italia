@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rassegna Stampa Messina - Affiancata</title>
+    <title>Rassegna Stampa Messina - Titoli e Sintesi</title>
     <style>
         :root {
             --primary: #0f172a;
@@ -12,77 +12,59 @@
             --gds-color: #1d4ed8;
             --ls-color: #b91c1c;
         }
-        
-        html, body {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100%;
             background-color: var(--light);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow: hidden; /* Evita il doppio scorrimento della pagina principale */
         }
-
         header {
             background-color: var(--primary);
             color: white;
-            padding: 10px 15px;
+            padding: 12px;
             text-align: center;
-            border-bottom: 3px solid var(--accent);
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-bottom: 4px solid var(--accent);
         }
-        header h1 { 
-            margin: 0; 
-            font-size: 16px; 
-            letter-spacing: 0.5px;
-        }
-
-        /* Contenitore principale flessibile */
-        .Rassegna-Split {
-            display: flex;
-            flex-direction: column; /* Di base si incolonnano sui display piccoli */
-            height: calc(100% - 63px); /* Sottrae l'altezza dell'header */
-            width: 100%;
-        }
-
-        .colonna-giornale {
-            flex: 1;
+        header h1 { margin: 0; font-size: 18px; }
+        
+        .Rassegna-Container {
             display: flex;
             flex-direction: column;
-            border-bottom: 2px solid #cbd5e1;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 15px auto;
+            padding: 0 15px;
         }
-
-        .insegna-giornale {
-            color: white;
-            padding: 8px 12px;
+        
+        .colonna-notizie {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 15px;
+        }
+        
+        .insegna {
+            font-size: 16px;
             font-weight: bold;
-            font-size: 13px;
-            letter-spacing: 0.5px;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #cbd5e1;
             text-transform: uppercase;
         }
-        .bg-gds { background-color: var(--gds-color); }
-        .bg-ls { background-color: var(--ls-color); }
+        .text-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
+        .text-ls { color: var(--ls-color); border-bottom-color: var(--ls-color); }
 
-        /* Finestra web a tutto schermo dentro la sua colonna */
-        .finestra-web {
+        /* Stile per i widget esterni puliti */
+        .box-widget {
             width: 100%;
-            flex: 1;
+            min-height: 500px;
             border: none;
-            background: #fff;
         }
 
-        /* REGOLA REGISTRATA: Se lo schermo è largo (PC, Tablet o Telefono Girato di Lato) affianca le finestre */
         @media (min-width: 768px) {
-            .Rassegna-Split {
-                flex-direction: row; /* Affiancamento orizzontale */
-            }
-            .colonna-giornale {
-                border-bottom: none;
-            }
-            .colonna-giornale:first-child {
-                border-right: 2px solid #cbd5e1; /* Separatore verticale tra i due giornali */
+            .Rassegna-Container {
+                flex-direction: row; /* Affiancamento su schermi grandi o telefono ruotato */
             }
         }
     </style>
@@ -90,21 +72,23 @@
 <body>
 
 <header>
-    <h1>📰 RASSEGNA STAMPA LIVE — PROVINCIA DI MESSINA</h1>
+    <h1>📰 TITOLI E RIASSUNTI — CRONACA DI MESSINA</h1>
 </header>
 
-<div class="Rassegna-Split">
-    
-    <!-- SINISTRA: GAZZETTA DEL SUD -->
-    <div class="colonna-giornale">
-        <div class="insegna-giornale bg-gds">🔵 Gazzetta del Sud — Messina</div>
-        <iframe class="finestra-web" src="https://messina.gazzettadelsud.it/"></iframe>
+<div class="Rassegna-Container">
+
+    <!-- COLONNA SINISTRA: GAZZETTA DEL SUD -->
+    <div class="colonna-notizie">
+        <div class="insegna text-gds">🔵 Gazzetta del Sud — Messina</div>
+        <!-- INSERIRE IL CODICE GENERATO AL POSTO DI QUESTO IFRAME DI ESEMPIO -->
+        <iframe class="box-widget" src="https://rss.app/embed/v1/list/INSERISCI_QUI_IL_TUO_CODICE_GDS"></iframe>
     </div>
 
-    <!-- DESTRA: LA SICILIA -->
-    <div class="colonna-giornale">
-        <div class="insegna-giornale bg-ls">🔴 La Sicilia — Messina</div>
-        <iframe class="finestra-web" src="https://www.lasicilia.it/messina/"></iframe>
+    <!-- COLONNA DESTRA: LA SICILIA -->
+    <div class="colonna-notizie">
+        <div class="insegna text-ls">🔴 La Sicilia — Messina</div>
+        <!-- INSERIRE IL CODICE GENERATO AL POSTO DI QUESTO IFRAME DI ESEMPIO -->
+        <iframe class="box-widget" src="https://rss.app/embed/v1/list/INSERISCI_QUI_IL_TUO_CODICE_LS"></iframe>
     </div>
 
 </div>
