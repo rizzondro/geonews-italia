@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pannello Notizie Messina</title>
+    <title>Rassegna Stampa Reale dello Stretto</title>
     <style>
         :root {
             --primary: #0f172a;
             --accent: #0284c7;
             --light: #f8fafc;
             --text: #1e293b;
-            --gds-color: #0c4a6e;
-            --ls-color: #991b1b;
+            --gds-color: #1d4ed8;
+            --ls-color: #b91c1c;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -23,116 +23,130 @@
         header {
             background-color: var(--primary);
             color: white;
-            padding: 20px 15px;
+            padding: 15px;
             text-align: center;
             border-bottom: 4px solid var(--accent);
         }
-        header h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
-        header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.7; }
+        header h1 { margin: 0; font-size: 20px; }
+        header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.8; }
         
         .container {
-            max-width: 480px;
-            margin: 20px auto;
-            padding: 0 15px;
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 0 10px;
         }
         .panel {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
         }
         label {
             font-weight: bold;
             display: block;
-            margin: 0 0 8px 0;
+            margin-bottom: 6px;
             font-size: 12px;
             text-transform: uppercase;
             color: #64748b;
         }
-        input[type="date"] {
+        select {
             width: 100%;
             padding: 12px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 16px;
-            box-sizing: border-box;
             background-color: #fff;
-            color: #0f172a;
         }
         
-        .link-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .archive-card {
-            background: white;
-            border-radius: 8px;
-            padding: 18px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            border-top: 4px solid #cbd5e1;
-        }
-        .archive-card.gds { border-top-color: var(--gds-color); }
-        .archive-card.ls { border-top-color: var(--ls-color); }
-        
-        .card-title {
+        .news-section-title {
             font-size: 16px;
             font-weight: bold;
-            margin: 0 0 4px 0;
+            margin: 20px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .gds .card-title { color: var(--gds-color); }
-        .ls .card-title { color: var(--ls-color); }
-        
-        .card-date {
-            font-size: 13px;
-            color: #64748b;
-            margin: 0 0 15px 0;
+        .title-gds { color: var(--gds-color); border-bottom-color: var(--gds-color); }
+        .title-ls { color: var(--ls-color); border-bottom-color: var(--ls-color); }
+
+        .feed-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        
-        .btn-link {
-            display: block;
-            text-align: center;
+        .news-card {
+            background: white;
+            border-radius: 8px;
             padding: 14px;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-            transition: opacity 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border-left: 4px solid #cbd5e1;
         }
-        .gds .btn-link { background-color: var(--gds-color); }
-        .ls .btn-link { background-color: var(--ls-color); }
-        .btn-link:active { opacity: 0.8; }
+        .news-card.gds { border-left-color: var(--gds-color); }
+        .news-card.ls { border-left-color: var(--ls-color); }
+        
+        .news-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            line-height: 1.4;
+            color: #0f172a;
+        }
+        .news-card p {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+        }
+        .news-card .meta {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        .news-card a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 14px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>📰 Archivio Notizie Messina</h1>
-    <p>ACCESSO DIRETTO AI PORTALI WEB LOCALI</p>
+    <h1>📰 Notizie reali dello Stretto</h1>
+    <p>FEED REALI E NOTIZIE DI OGGI IN TEMPO REALE</p>
 </header>
 
 <div class="container">
     <div class="panel">
-        <label for="data-ricerca">Seleziona il giorno da cercare:</label>
-        <input type="date" id="data-ricerca" onchange="generazioneLink()">
+        <label for="provincia">Seleziona la Redazione Locale:</label>
+        <select id="provincia" onchange="caricaNotizieVere()">
+            <option value="ME">Messina (Cronaca & Provincia)</option>
+            <option value="RC">Reggio Calabria (Cronaca & Provincia)</option>
+        </select>
     </div>
 
-    <div class="link-container">
-        <!-- Gazzetta del Sud - Messina -->
-        <div class="archive-card gds">
-            <p class="card-title">Gazzetta del Sud — Messina</p>
-            <p class="card-date" id="gds-target-date">Generazione link...</p>
-            <a id="link-gds" href="#" target="_blank" class="btn-link">Vedi Notizie del Giorno →</a>
-        </div>
+    <!-- SEZIONE GAZZETTA DEL SUD -->
+    <div class="news-section-title title-gds">🔵 GAZZETTA DEL SUD</div>
+    <div id="feed-gds" class="feed-container">
+        <div class="loading">Connessione alla redazione in corso...</div>
+    </div>
 
-        <!-- La Sicilia - Messina -->
-        <div class="archive-card ls">
-            <p class="card-title">La Sicilia — Messina</p>
-            <p class="card-date" id="ls-target-date">Generazione link...</p>
-            <a id="link-ls" href="#" target="_blank" class="btn-link">Vedi Notizie del Giorno →</a>
-        </div>
+    <!-- SEZIONE LA SICILIA -->
+    <div class="news-section-title title-ls">🔴 LA SICILIA</div>
+    <div id="feed-ls" class="feed-container">
+        <div class="loading">Connessione alla redazione in corso...</div>
     </div>
 </div>
 
