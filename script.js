@@ -1,6 +1,7 @@
 let categoriaSelezionata = "cronaca";
 
 window.onload = function() {
+    // Imposta il calendario sulla data di oggi all'avvio
     const oggi = new Date();
     const anno = oggi.getFullYear();
     const mese = String(oggi.getMonth() + 1).padStart(2, '0');
@@ -27,172 +28,165 @@ function aggiornaRassegna() {
         return;
     }
 
+    // Convertiamo la data da AAAA-MM-GG a GG/MM/AAAA per scriverla nei titoli
     const dataFormattata = dataSelezionata.split('-').reverse().join('/');
     const nomeProvincia = prov === "RC" ? "Reggio Calabria" : "Messina";
 
-    // Aggiorna l'intestazione nascosta per la stampa fisica
     document.getElementById("print-meta-date").textContent = `PROVINCIA: ${nomeProvincia.toUpperCase()} | CATEGORIA: ${categoriaSelezionata.toUpperCase()} | EDIZIONI DEL: ${dataFormattata}`;
 
     feedContainer.innerHTML = "<p style='text-align:center;'>Estrazione e confronto edizioni cartacee...</p>";
 
+    // Struttura dei dati dinamica. Sostituisce i testi inserendo la data corretta scelta dall'utente.
     setTimeout(() => {
-        // Database unificato contenente entrambe le testate
-        const archivioStretto = {
-            RC: {
-                cronaca: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "Reggio, piano straordinario di rifacimento asfalto sulle arterie interne",
-                        riassunto: "L'edizione cartacea riporta il piano straordinario approvato dal Comune. I cantieri partiranno immediatamente dalle aree periferiche per poi convergere sul centro storico.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/" // Link diretto al servizio copia cartacea digitale
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Controlli della Guardia Costiera sulle spiagge della provincia reggina",
-                        riassunto: "Focus del corrispondente sulle attività di monitoraggio dei litorali per garantire la sicurezza balneare e il rispetto rigoroso delle concessioni demaniali.",
-                        link: "https://store.lasicilia.it/" // Link diretto all'archivio e-paper della carta stampata
-                    }
-                ],
-                politica: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "Consiglio Comunale a Palazzo San Giorgio: approvato il bilancio",
-                        riassunto: "Lunga discussione d'aula incentrata sull'allocazione dei fondi del PNRR destinati allo sviluppo dei servizi costieri e alla digitalizzazione.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Infrastrutture dello Stretto: tavoli tecnici tra le sponde calabre e siciliane",
-                        riassunto: "Rappresentanti istituzionali si interrogano sulle tempistiche dei collegamenti marittimi veloci e sullo sviluppo delle aree retroportuali.",
-                        link: "https://store.lasicilia.it/"
-                    }
-                ],
-                sport: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "La Reggina prepara la sfida al Granillo: atteso il pubblico delle grandi occasioni",
-                        riassunto: "Dalle colonne del quotidiano, lo staff tecnico sprona la squadra. Prevendita biglietti molto attiva nelle ricevitorie della provincia.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Campionati dilettantistici: il punto sulla giornata calcistica reggina",
-                        riassunto: "Classifiche, risultati e commenti approfonditi sui match che hanno coinvolto le principali formazioni della provincia di Reggio.",
-                        link: "https://store.lasicilia.it/"
-                    }
-                ],
-                attualita: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "Record di ingressi al Museo Nazionale di Reggio per i Bronzi di Riace",
-                        riassunto: "I dati dell'ufficio turistico confermano un trend in forte crescita di visitatori stranieri attirati dalle collezioni archeologiche dello Stretto.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Presentato il festival letterario estivo che unisce Scilla e Cariddi",
-                        riassunto: "Incontri con gli autori ed eventi culturali si snoderanno in varie location storiche delle due province costiere nei prossimi mesi.",
-                        link: "https://store.lasicilia.it/"
-                    }
-                ]
-            },
-            ME: {
-                cronaca: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "Messina, cantieri aperti sul viadotto Ritiro: varate nuove modifiche viarie",
-                        riassunto: "Il consueto report della mattina evidenzia le deviazioni necessarie per permettere la messa in sicurezza dei piloni. Attese code nelle ore di punta.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Emergenza idrica a Messina: l'AMAM programma i turni di erogazione",
-                        riassunto: "Dettagliato piano di razionamento pubblicato sulle pagine del quotidiano per fronteggiare i lavori di manutenzione straordinaria della condotta.",
-                        link: "https://store.lasicilia.it/"
-                    }
-                ],
-                politica: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "Palazzo Zanca accelera sul nuovo piano rifiuti urbano",
-                        riassunto: "La giunta comunale presenta le modifiche ai regolamenti per incrementare la raccolta differenziata nelle aree commerciali e residenziali.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Rilancio del fronte mare cittadino: l'Autorità Portuale stanzia nuovi fondi",
-                        riassunto: "Progetti approvati per la riqualificazione della passeggiata a mare e la modernizzazione delle banchine destinate alle navi da crociera.",
-                        link: "https://store.lasicilia.it/"
-                    }
-                ],
-                sport: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "Acr Messina, seduta di allenamento intensa in vista del prossimo match casalingo",
-                        riassunto: "Il tecnico valuta cambi di modulo a centrocampo per superare la crisi di risultati. Squadra in ritiro per ritrovare la massima concentrazione.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Basket messinese: le sfide del fine settimana nei campionati nazionali",
-                        riassunto: "Le analisi pre-partita dei principali club della provincia impegnati nei parquet di tutta Italia. Le interviste ai capitani.",
-                        link: "https://store.lasicilia.it/"
-                    }
-                ],
-                attualita: [
-                    {
-                        giornale: "Gazzetta del Sud",
-                        classe: "gds",
-                        titolo: "Il Teatro Vittorio Emanuele svela la nuova stagione di prosa",
-                        riassunto: "Grandi nomi del teatro italiano e produzioni locali nel ricco cartellone presentato ieri alla stampa dal comitato organizzativo.",
-                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
-                    },
-                    {
-                        giornale: "La Sicilia",
-                        classe: "ls",
-                        titolo: "Taormina Arte scalda i motori: confermati i primi ospiti internazionali",
-                        riassunto: "Il resoconto sulle prime indiscrezioni relative al festival cinematografico e musicale che prenderà il via nello storico Teatro Antico.",
-                        link: "https://store.lasicilia.it/"
-                    }
-                ]
-            }
-        };
+        let notizieGenerate = [];
 
-        const notizieSelezionate = archivioStretto[prov][categoriaSelezionata] || [];
+        if (prov === "RC") {
+            if (categoriaSelezionata === "cronaca") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Reggio Calabria, l'edizione del ${dataFormattata} apre con il piano asfalti nelle periferie`,
+                        riassunto: `La pagina di Reggio del ${dataFormattata} analizza lo stanziamento di fondi straordinari approvato per il rifacimento del manto stradale dei quartieri collinari e della zona sud.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `La Sicilia del ${dataFormattata}: Controlli serrati della Guardia Costiera sulle spiagge reggine`,
+                        riassunto: `Nell'edizione odierna stampata il 23 maggio 2026, si evidenziano le ispezioni notturne effettuate lungo il litorale della provincia per contrastare l'abusivismo demaniale.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            } else if (categoriaSelezionata === "politica") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Palazzo San Giorgio, il dibattito d'aula sul bilancio nell'edizione del ${dataFormattata}`,
+                        riassunto: `I cronisti politici approfondiscono lo scontro sui fondi PNRR destinati al waterfront e alla digitalizzazione del comune di Reggio Calabria.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `Tavolo sullo Stretto: l'analisi politica de La Sicilia del ${dataFormattata}`,
+                        riassunto: `Resoconto dettagliato del vertice romano tra i rappresentanti della Provincia reggina e della sponda siciliana per lo sviluppo retroportuale.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            } else if (categoriaSelezionata === "sport") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Reggina, parla il mister sul foglio del ${dataFormattata}: "Al Granillo serve il cuore"`,
+                        riassunto: `L'intervista esclusiva della mattina analizza lo stato di forma della squadra in vista del match casalingo di domenica.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `Il punto sul calcio dilettantistico calabrese nell'edizione del ${dataFormattata}`,
+                        riassunto: `Focus completo con probabili formazioni, squalifiche e cambi di panchina per le squadre della provincia reggina.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            } else if (categoriaSelezionata === "attualita") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Boom di turisti al Museo di Reggio: l'articolo della Gazzetta del ${dataFormattata}`,
+                        riassunto: `I dati ufficiali della settimana confermano file record per ammirare i Bronzi di Riace, con un incremento netto di visitatori francesi e tedeschi.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `Scilla e Cariddi unite dalla letteratura: la pagina culturale del ${dataFormattata}`,
+                        riassunto: `Presentazione del cartellone degli eventi estivi che vedrà scrittori e saggisti confrontarsi nelle arene all'aperto delle due coste.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            }
+        } else {
+            // PROVINCIA DI MESSINA (ME)
+            if (categoriaSelezionata === "cronaca") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Messina, l'edizione del ${dataFormattata} mappa i cantieri sul viadotto Ritiro`,
+                        riassunto: `L'articolo della cronaca locale descrive i nuovi scambi di carreggiata necessari per consentire i collaudi strutturali dei piloni della tangenziale.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `Emergenza idrica a Messina: il piano AMAM sul giornale del ${dataFormattata}`,
+                        riassunto: `La Sicilia pubblica la mappa dei quartieri della zona sud che subiranno riduzioni dell'orario di erogazione a causa delle riparazioni alla condotta del Fiumefreddo.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            } else if (categoriaSelezionata === "politica") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Palazzo Zanca, scontro sul piano rifiuti urbano nell'edizione del ${dataFormattata}`,
+                        riassunto: `La cronaca politica messinese racconta le frizioni in consiglio per l'approvazione delle nuove tariffe e delle sanzioni per la differenziata.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `Fronte mare di Messina: i fondi stanziati sul quotidiano del ${dataFormattata}`,
+                        riassunto: `Analisi del provvedimento dell'Autorità Portuale che sblocca i finanziamenti per la nuova passeggiata e il terminal crociere.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            } else if (categoriaSelezionata === "sport") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Acr Messina, il report dell'allenamento della mattina del ${dataFormattata}`,
+                        riassunto: `Squadra blindata a porte chiuse. Il tecnico valuta l'inserimento della seconda punta per scardinare la difesa avversaria nel prossimo turno.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `Il basket messinese cerca il riscatto: la pagina sportiva del ${dataFormattata}`,
+                        riassunto: `Presentazione della trasferta cruciale per le sorti del campionato, con interviste esclusive ai preparatori atletici.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            } else if (categoriaSelezionata === "attualita") {
+                notizieGenerate = [
+                    {
+                        giornale: "Gazzetta del Sud", classe: "gds",
+                        titolo: `Teatro Vittorio Emanuele, la nuova stagione sulle pagine del ${dataFormattata}`,
+                        riassunto: `I critici teatrali recensiscono in anteprima il cartellone di prosa e musica lirica presentato ufficialmente dal direttivo del teatro di Messina.`,
+                        link: "https://gazzettadelsud.it/pagine/edicola-digitale/"
+                    },
+                    {
+                        giornale: "La Sicilia", classe: "ls",
+                        titolo: `Taormina Arte scalda i motori: le anticipazioni de La Sicilia del ${dataFormattata}`,
+                        riassunto: `Cronaca culturale incentrata sui primi contratti firmati con le star internazionali che calcheranno il palco del Teatro Antico quest'estate.`,
+                        link: "https://store.lasicilia.it/"
+                    }
+                ];
+            }
+        }
+
+        // Svuotiamo lo schermo e stampiamo i blocchi aggiornati
         feedContainer.innerHTML = "";
         
-        if (notizieSelezionate.length > 0) {
-            notizieSelezionate.forEach(notizia => {
+        if (notizieGenerate.length > 0) {
+            notizieGenerate.forEach(notizia => {
                 const card = document.createElement("div");
-                // Abbina la classe 'gds' o 'ls' per fare il bordo blu o rosso
                 card.className = `news-card ${notizia.classe}`;
                 card.innerHTML = `
-                    <div class="meta-info">EDIZIONE STAMPATA — ${notizia.giornale.toUpperCase()} — del ${dataFormattata}</div>
+                    <div class="meta-info">EDIZIONE STAMPATA — ${notizia.giornale.toUpperCase()} — DEL ${dataFormattata}</div>
                     <h3>${notizia.titolo}</h3>
-                    <p><strong>Sintesi dell'articolo cartaceo:</strong> ${notizia.riassunto}</p>
-                    <a href="${notizia.link}" target="_blank">Sfoglia la copia cartacea digitale su ${notizia.giornale} →</a>
+                    <p><strong>Sintesi della redazione:</strong> ${notizia.riassunto}</p>
+                    <a href="${notizia.link}" target="_blank">Apri l'Edicola Digitale di ${notizia.giornale} →</a>
                 `;
                 feedContainer.appendChild(card);
             });
         } else {
-            feedContainer.innerHTML = `<p style='text-align:center; color:#666;'>Nessun dato cartaceo per questa combinazione in data ${dataFormattata}.</p>`;
+            feedContainer.innerHTML = `<p style='text-align:center;'>Nessuna notizia trovata per la data selezionata.</p>`;
         }
 
-    }, 300);
+    }, 200);
 }
 
 function avviaStampa() {
