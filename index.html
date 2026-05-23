@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rassegna Stampa Reale dello Stretto</title>
+    <title>Rassegna Stampa Messina - Affiancata</title>
     <style>
         :root {
             --primary: #0f172a;
@@ -12,104 +12,102 @@
             --gds-color: #1d4ed8;
             --ls-color: #b91c1c;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        
+        html, body {
             margin: 0;
             padding: 0;
+            height: 100%;
             background-color: var(--light);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden; /* Evita il doppio scorrimento della pagina principale */
         }
+
         header {
             background-color: var(--primary);
             color: white;
-            padding: 12px;
-            text-align: center;
-            border-bottom: 4px solid var(--accent);
-        }
-        header h1 { margin: 0; font-size: 18px; }
-        
-        .container {
-            max-width: 800px;
-            margin: 10px auto;
-            padding: 0 10px;
-        }
-        .panel {
-            background: white;
-            padding: 12px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 6px;
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #64748b;
-        }
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 16px;
-            background-color: #fff;
-        }
-        
-        .news-section {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        .section-header {
-            color: white;
             padding: 10px 15px;
-            font-weight: bold;
-            font-size: 14px;
+            text-align: center;
+            border-bottom: 3px solid var(--accent);
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        header h1 { 
+            margin: 0; 
+            font-size: 16px; 
             letter-spacing: 0.5px;
+        }
+
+        /* Contenitore principale flessibile */
+        .Rassegna-Split {
+            display: flex;
+            flex-direction: column; /* Di base si incolonnano sui display piccoli */
+            height: calc(100% - 63px); /* Sottrae l'altezza dell'header */
+            width: 100%;
+        }
+
+        .colonna-giornale {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .insegna-giornale {
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .bg-gds { background-color: var(--gds-color); }
         .bg-ls { background-color: var(--ls-color); }
 
-        /* La finestra che ospita il sito originale */
-        .news-window {
+        /* Finestra web a tutto schermo dentro la sua colonna */
+        .finestra-web {
             width: 100%;
-            height: 450px; /* Altezza ideale per scorrere le notizie sul telefono */
+            flex: 1;
             border: none;
             background: #fff;
+        }
+
+        /* REGOLA REGISTRATA: Se lo schermo è largo (PC, Tablet o Telefono Girato di Lato) affianca le finestre */
+        @media (min-width: 768px) {
+            .Rassegna-Split {
+                flex-direction: row; /* Affiancamento orizzontale */
+            }
+            .colonna-giornale {
+                border-bottom: none;
+            }
+            .colonna-giornale:first-child {
+                border-right: 2px solid #cbd5e1; /* Separatore verticale tra i due giornali */
+            }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>📰 Rassegna Stampa Reale</h1>
+    <h1>📰 RASSEGNA STAMPA LIVE — PROVINCIA DI MESSINA</h1>
 </header>
 
-<div class="container">
-    <div class="panel">
-        <label for="provincia">Seleziona la Redazione Locale:</label>
-        <select id="provincia" onchange="cambiaRedazione()">
-            <option value="ME">Messina (Cronaca & Provincia)</option>
-            <option value="RC">Reggio Calabria (Cronaca & Provincia)</option>
-        </select>
+<div class="Rassegna-Split">
+    
+    <!-- SINISTRA: GAZZETTA DEL SUD -->
+    <div class="colonna-giornale">
+        <div class="insegna-giornale bg-gds">🔵 Gazzetta del Sud — Messina</div>
+        <iframe class="finestra-web" src="https://messina.gazzettadelsud.it/"></iframe>
     </div>
 
-    <!-- SITO GAZZETTA DEL SUD -->
-    <div class="news-section">
-        <div class="section-header bg-gds">🔵 GAZZETTA DEL SUD - LIVE TESTATA</div>
-        <iframe id="iframe-gds" class="news-window" src="https://messina.gazzettadelsud.it/"></iframe>
+    <!-- DESTRA: LA SICILIA -->
+    <div class="colonna-giornale">
+        <div class="insegna-giornale bg-ls">🔴 La Sicilia — Messina</div>
+        <iframe class="finestra-web" src="https://www.lasicilia.it/messina/"></iframe>
     </div>
 
-    <!-- SITO LA SICILIA -->
-    <div class="news-section">
-        <div class="section-header bg-ls">🔴 LA SICILIA - LIVE TESTATA</div>
-        <iframe id="iframe-ls" class="news-window" src="https://www.lasicilia.it/messina/"></iframe>
-    </div>
 </div>
 
-<script src="script.js"></script>
 </body>
 </html>
